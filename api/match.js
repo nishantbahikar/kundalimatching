@@ -8,160 +8,166 @@ export default async function handler(req, res) {
 
   const { boyName, girlName, boyDob, girlDob, boyLat, boyLon, girlLat, girlLon } = req.body;
 
+  const clientId     = process.env.PROKERALA_CLIENT_ID;
+  const clientSecret = process.env.PROKERALA_CLIENT_SECRET;
+  const anthropicKey = process.env.ANTHROPIC_API_KEY;
+
+  if (!clientId || !clientSecret) {
+    return res.status(500).json({
+      error: 'Prokerala credentials missing',
+      fix: 'Add PROKERALA_CLIENT_ID and PROKERALA_CLIENT_SECRET to Vercel env vars, then redeploy.',
+      has_client_id: !!clientId,
+      has_client_secret: !!clientSecret
+    });
+  }
+  if (!anthropicKey) {
+    return res.status(500).json({
+      error: 'Anthropic API key missing',
+      fix: 'Add ANTHROPIC_API_KEY to Vercel env vars, then redeploy.'
+    });
+  }
   if (!boyDob || !girlDob || !boyLat || !girlLat) {
     return res.status(400).json({ error: 'Missing required fields' });
   }
 
   try {
-    // ── STEP 1: Get Prokerala OAuth2 token ──────────────────────────────
+    // STEP 1: Prokerala OAuth token
     const tokenRes = await fetch('https://api.prokerala.com/token', {
       method: 'POST',
       headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
       body: new URLSearchParams({
         grant_type: 'client_credentials',
-        client_id: process.env.PROKERALA_CLIENT_ID,
-        client_secret: process.env.PROKERALA_CLIENT_SECRET,
+        client_id: clientId,
+        client_secret: clientSecret,
       })
     });
-
-    const tokenData = await tokenRes.json();
+    const tokenText = await tokenRes.text();
+    let tokenData;
+    try { tokenData = JSON.parse(tokenText); } catch(e) {
+      return res.status(500).json({ error: 'Prokerala token endpoint returned non-JSON', raw: tokenText.slice(0,300) });
+    }
     if (!tokenData.access_token) {
-      return res.status(500).json({ error: 'Prokerala auth failed. Check your Client ID and Secret in Vercel environment variables.', details: tokenData });
+      return res.status(500).json({
+        error: 'Prokerala authentication failed. Check your Client ID and Secret.',
+        prokerala_response: tokenData
+      });
     }
     const token = tokenData.access_token;
 
-    // ── STEP 2: Call Prokerala Kundli Matching API ───────────────────────
-    // Prokerala expects: girl_dob, girl_coordinates, boy_dob, boy_coordinates, ayanamsa
+    // STEP 2: Kundli Matching
     const params = new URLSearchParams({
-      girl_dob: girlDob,
+      girl_dob:         girlDob,
       girl_coordinates: `${girlLat},${girlLon}`,
-      boy_dob: boyDob,
-      boy_coordinates: `${boyLat},${boyLon}`,
-      ayanamsa: '1'  // 1 = Lahiri (standard for North Indian)
+      boy_dob:          boyDob,
+      boy_coordinates:  `${boyLat},${boyLon}`,
+      ayanamsa:         '1'
     });
-
     const matchRes = await fetch(`https://api.prokerala.com/v2/astrology/kundli-matching?${params.toString()}`, {
-      headers: {
-        Authorization: `Bearer ${token}`,
-        'Content-Type': 'application/json'
-      }
+      method: 'GET',
+      headers: { Authorization: `Bearer ${token}` }
     });
-
-    const matchData = await matchRes.json();
-
-    // Prokerala wraps response in data.data.result
-    if (!matchData.data || !matchData.data.result) {
+    const matchText = await matchRes.text();
+    let matchData;
+    try { matchData = JSON.parse(matchText); } catch(e) {
+      return res.status(500).json({ error: 'Prokerala API returned non-JSON', raw: matchText.slice(0,500) });
+    }
+    if (matchRes.status !== 200 || !matchData.data) {
       return res.status(500).json({
-        error: 'Prokerala returned an unexpected response. The API may be down or your credentials may be wrong.',
-        raw: matchData
+        error: 'Prokerala API error (status ' + matchRes.status + ')',
+        fix: matchRes.status === 401 ? 'Invalid token — check credentials and redeploy'
+           : matchRes.status === 403 ? 'Plan does not include this endpoint — check api.prokerala.com'
+           : matchRes.status === 429 ? 'Rate limit exceeded — wait a minute and retry'
+           : 'Unexpected error from Prokerala',
+        prokerala_response: matchData
       });
     }
 
-    const result = matchData.data.result;
-    const input  = matchData.data.input || {};
+    const result = matchData.data.result || matchData.data;
+    const raw    = result.koot_match_score || result.koot_details || result;
 
-    // ── STEP 3: Parse Prokerala scores ───────────────────────────────────
-    // Prokerala returns scores inside result.koot_scores or similar
-    // Map them into our standard format
-    const raw = result.koot_match_score || result;
-
+    // STEP 3: Parse scores
     const scores = {
-      'Varna':        Number(raw.varna        || raw.varna_score        || 0),
-      'Vashya':       Number(raw.vashya       || raw.vashya_score       || 0),
-      'Tara':         Number(raw.tara         || raw.tara_score         || 0),
-      'Yoni':         Number(raw.yoni         || raw.yoni_score         || 0),
-      'Graha Maitri': Number(raw.graha_maitri || raw.graha_maitri_score || raw.maitri || 0),
-      'Gana':         Number(raw.gana         || raw.gana_score         || 0),
-      'Bhakoot':      Number(raw.bhakoot      || raw.bhakoot_score      || raw.bhakut || 0),
-      'Nadi':         Number(raw.nadi         || raw.nadi_score         || 0),
+      'Varna':        safeNum(raw, ['varna','varna_koot','varna_score']),
+      'Vashya':       safeNum(raw, ['vashya','vashya_koot','vashya_score']),
+      'Tara':         safeNum(raw, ['tara','tara_koot','tara_score']),
+      'Yoni':         safeNum(raw, ['yoni','yoni_koot','yoni_score']),
+      'Graha Maitri': safeNum(raw, ['graha_maitri','graha_maitri_koot','maitri','planet_friendship']),
+      'Gana':         safeNum(raw, ['gana','gana_koot','gana_score']),
+      'Bhakoot':      safeNum(raw, ['bhakoot','bhakoot_koot','bhakut','bhakoot_score']),
+      'Nadi':         safeNum(raw, ['nadi','nadi_koot','nadi_score']),
     };
+    const total = Object.values(scores).reduce((a,b) => a+b, 0);
 
-    const total = Object.values(scores).reduce((a, b) => a + b, 0);
-
-    // Profile info
-    const boyInfo  = result.boy_info  || result.bridegroom_details || {};
-    const girlInfo = result.girl_info || result.bride_details       || {};
-
+    // STEP 4: Profile info
+    const boyInfo  = result.boy_info  || result.bridegroom_details || result.boy  || {};
+    const girlInfo = result.girl_info || result.bride_details      || result.girl || {};
     const info = {
-      boy_rashi:     boyInfo.rashi  || boyInfo.moon_sign    || boyInfo.rasi  || '—',
-      boy_nakshatra: boyInfo.nakshatra || boyInfo.birth_star  || '—',
-      boy_lagna:     boyInfo.lagna  || boyInfo.ascendant     || '—',
-      girl_rashi:    girlInfo.rashi || girlInfo.moon_sign   || girlInfo.rasi || '—',
-      girl_nakshatra:girlInfo.nakshatra || girlInfo.birth_star || '—',
-      girl_lagna:    girlInfo.lagna || girlInfo.ascendant    || '—',
+      boy_rashi:      pick(boyInfo,  ['rashi','moon_sign','rasi','zodiac_sign']) || '—',
+      boy_nakshatra:  pick(boyInfo,  ['nakshatra','birth_star','star'])          || '—',
+      boy_lagna:      pick(boyInfo,  ['lagna','ascendant','rising_sign'])        || '—',
+      girl_rashi:     pick(girlInfo, ['rashi','moon_sign','rasi','zodiac_sign']) || '—',
+      girl_nakshatra: pick(girlInfo, ['nakshatra','birth_star','star'])          || '—',
+      girl_lagna:     pick(girlInfo, ['lagna','ascendant','rising_sign'])        || '—',
     };
 
-    // Dosha flags
-    const doshaData = result.dosha_details || result.doshas || {};
-    const nadi_dosha    = parseDoshaFlag(doshaData.nadi    || raw.nadi_dosha    || scores['Nadi']    < 8 ? (scores['Nadi'] === 0 ? 'present' : 'partial') : 'clear');
-    const bhakoot_dosha = parseDoshaFlag(doshaData.bhakoot || raw.bhakoot_dosha || scores['Bhakoot'] < 7 ? (scores['Bhakoot'] === 0 ? 'present' : 'partial') : 'clear');
-    const gana_dosha    = parseDoshaFlag(doshaData.gana    || raw.gana_dosha    || scores['Gana']    < 4 ? (scores['Gana']    === 0 ? 'present' : 'partial') : 'clear');
-    const mangal_dosha  = parseDoshaFlag(doshaData.mangal  || result.mangal_dosha || 'partial');
+    // STEP 5: Dosha flags
+    const nadi_dosha    = scores['Nadi']    === 0 ? 'present' : scores['Nadi']    < 8 ? 'partial' : 'clear';
+    const bhakoot_dosha = scores['Bhakoot'] === 0 ? 'present' : scores['Bhakoot'] < 7 ? 'partial' : 'clear';
+    const gana_dosha    = scores['Gana']    === 0 ? 'present' : scores['Gana']    < 4 ? 'partial' : 'clear';
+    const mangal_dosha  = pick(result, ['mangal_dosha','kuja_dosha','manglik']) || 'partial';
 
-    // ── STEP 4: Get Claude AI interpretation ─────────────────────────────
-    const prompt = `You are a warm, experienced Vedic astrology expert. Based on this kundali matching result, write a 3-paragraph interpretation for ${boyName || 'the boy'} and ${girlName || 'the girl'}.
+    // STEP 6: Claude interpretation
+    let interpretation = '';
+    try {
+      const claudeRes = await fetch('https://api.anthropic.com/v1/messages', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'x-api-key': anthropicKey,
+          'anthropic-version': '2023-06-01'
+        },
+        body: JSON.stringify({
+          model: 'claude-sonnet-4-20250514',
+          max_tokens: 800,
+          messages: [{ role: 'user', content: `You are a warm Vedic astrology expert. Write a 3-paragraph interpretation for ${boyName||'the boy'} and ${girlName||'the girl'} based on these Prokerala-calculated kundali matching results:
 
-Ashtakoot scores:
-${Object.entries(scores).map(([k,v])=>`- ${k}: ${v}`).join('\n')}
+Scores: ${Object.entries(scores).map(([k,v])=>`${k}=${v}`).join(', ')}
 Total: ${total}/36
+Rashis: ${info.boy_rashi} (boy), ${info.girl_rashi} (girl)
+Nakshatras: ${info.boy_nakshatra} (boy), ${info.girl_nakshatra} (girl)
+Doshas: Nadi=${nadi_dosha}, Bhakoot=${bhakoot_dosha}, Gana=${gana_dosha}
 
-Rashis: ${info.boy_rashi} (boy) and ${info.girl_rashi} (girl)
-Nakshatras: ${info.boy_nakshatra} (boy) and ${info.girl_nakshatra} (girl)
+Para 1: Overall score meaning. Para 2: Specific strengths and honest concerns. Para 3: Practical compassionate advice. Flowing prose only, no bullets or headers.` }]
+        })
+      });
+      const cd = await claudeRes.json();
+      interpretation = cd.content?.[0]?.text || '';
+    } catch(e) { console.error('Claude error:', e.message); }
 
-Dosha summary:
-- Nadi dosha: ${nadi_dosha}
-- Bhakoot dosha: ${bhakoot_dosha}  
-- Gana dosha: ${gana_dosha}
-- Mangal dosha: ${mangal_dosha}
+    if (!interpretation) {
+      interpretation = `This match scores ${total} out of 36. ${total>=24?'A good match by Vedic standards.':total>=18?'An average match — some areas need attention.':'Significant astrological challenges present.'} Please consult a qualified Jyotishi for a complete reading.`;
+    }
 
-Write 3 paragraphs in plain, warm language:
-1. What the overall score means and the general compatibility picture
-2. The key strengths from high-scoring koots, and the specific concerns from low scores or doshas (be honest — if Bhakoot is 0 due to Shadastak, say so clearly)
-3. Practical, compassionate advice — remedies if needed, what to discuss, whether to see a pandit
+    return res.status(200).json({ scores, total, info, nadi_dosha, bhakoot_dosha, gana_dosha, mangal_dosha, interpretation });
 
-No headers, no bullet points. Flowing prose only.`;
-
-    const claudeRes = await fetch('https://api.anthropic.com/v1/messages', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        'x-api-key': process.env.ANTHROPIC_API_KEY,
-        'anthropic-version': '2023-06-01'
-      },
-      body: JSON.stringify({
-        model: 'claude-sonnet-4-20250514',
-        max_tokens: 1000,
-        messages: [{ role: 'user', content: prompt }]
-      })
-    });
-
-    const claudeData = await claudeRes.json();
-    const interpretation = claudeData.content?.[0]?.text || 'Interpretation unavailable at this time.';
-
-    // ── STEP 5: Return everything ─────────────────────────────────────────
-    res.status(200).json({
-      scores,
-      total,
-      info,
-      nadi_dosha,
-      bhakoot_dosha,
-      gana_dosha,
-      mangal_dosha,
-      interpretation,
-      raw_prokerala: matchData.data  // include for debugging
-    });
-
-  } catch (e) {
-    console.error('Match API error:', e);
-    res.status(500).json({ error: e.message || 'An unexpected error occurred' });
+  } catch(e) {
+    console.error('Unhandled error:', e);
+    return res.status(500).json({ error: 'Server error: ' + e.message });
   }
 }
 
-function parseDoshaFlag(val) {
-  if (!val) return 'clear';
-  const v = String(val).toLowerCase();
-  if (v === 'present' || v === 'true' || v === '1' || v === 'yes') return 'present';
-  if (v === 'partial') return 'partial';
-  if (v === 'clear' || v === 'false' || v === '0' || v === 'no') return 'clear';
-  return 'partial'; // default unknown to partial (show amber)
+function safeNum(obj, keys) {
+  for (const k of keys) {
+    if (obj?.[k] !== undefined && obj[k] !== null) {
+      const n = Number(obj[k]);
+      if (!isNaN(n)) return n;
+    }
+  }
+  return 0;
+}
+function pick(obj, keys) {
+  for (const k of keys) {
+    if (obj?.[k] !== undefined && obj[k] !== null && obj[k] !== '') return String(obj[k]);
+  }
+  return null;
 }

@@ -236,6 +236,14 @@
     #chat-window{bottom:88px;right:16px;width:calc(100vw - 32px);}
     #chat-bubble{bottom:20px;right:16px;}
   }
+
+  /* city autocomplete */
+  .city-wrap{position:relative;}
+  .city-dropdown{position:absolute;top:100%;left:0;right:0;background:var(--bg3);border:.5px solid var(--gold-border);border-top:none;border-radius:0 0 var(--r) var(--r);z-index:100;max-height:160px;overflow-y:auto;display:none;}
+  .city-dropdown.open{display:block;}
+  .city-opt{padding:9px 14px;font-size:13px;color:var(--cream);cursor:pointer;transition:background .15s;}
+  .city-opt:hover{background:var(--gold-dim);}
+  .city-opt small{font-size:11px;color:var(--muted);display:block;margin-top:1px;}
 </style>
 </head>
 <body>
@@ -285,7 +293,12 @@
           <div class="field"><label>Time of birth</label><input type="time" id="boy-time"></div>
           <div class="field"><label>AM / PM</label><select id="boy-ampm"><option value="AM">AM</option><option value="PM" selected>PM</option></select></div>
         </div>
-        <div class="field"><label>Birth city</label><input type="text" id="boy-city" placeholder="e.g. Mumbai"></div>
+        <div class="field"><label>Birth city</label>
+          <div class="city-wrap">
+            <input type="text" id="boy-city" placeholder="e.g. Mumbai" autocomplete="off" oninput="citySearch(this,'boy-city-drop')" onblur="hideDrop('boy-city-drop')">
+            <div class="city-dropdown" id="boy-city-drop"></div>
+          </div>
+        </div>
       </div>
       <div class="person-block">
         <div class="person-label"><span class="pdot" style="background:#d4a0b0;"></span>Girl / Bride</div>
@@ -295,7 +308,12 @@
           <div class="field"><label>Time of birth</label><input type="time" id="girl-time"></div>
           <div class="field"><label>AM / PM</label><select id="girl-ampm"><option value="AM" selected>AM</option><option value="PM">PM</option></select></div>
         </div>
-        <div class="field"><label>Birth city</label><input type="text" id="girl-city" placeholder="e.g. Vadodara"></div>
+        <div class="field"><label>Birth city</label>
+          <div class="city-wrap">
+            <input type="text" id="girl-city" placeholder="e.g. Vadodara" autocomplete="off" oninput="citySearch(this,'girl-city-drop')" onblur="hideDrop('girl-city-drop')">
+            <div class="city-dropdown" id="girl-city-drop"></div>
+          </div>
+        </div>
       </div>
     </div>
     <div class="submit-wrap">
@@ -495,9 +513,18 @@ async function runMatch(){
   setStep(0);
 
   try{
-    // Step 1: Geocode
+    // Step 1: Geocode (use cached coords from autocomplete if available)
     setStep(1);
-    const [boyGeo, girlGeo] = await Promise.all([geocode(boyCity),geocode(girlCity)]);
+    const boyCityEl  = document.getElementById('boy-city');
+    const girlCityEl = document.getElementById('girl-city');
+
+    let boyGeo, girlGeo;
+    if(boyCityEl.dataset.lat && girlCityEl.dataset.lat){
+      boyGeo  = {lat: boyCityEl.dataset.lat,  lon: boyCityEl.dataset.lon};
+      girlGeo = {lat: girlCityEl.dataset.lat, lon: girlCityEl.dataset.lon};
+    } else {
+      [boyGeo, girlGeo] = await Promise.all([geocode(boyCity), geocode(girlCity)]);
+    }
 
     // Step 2+3: Prokerala via proxy
     setStep(2);
@@ -656,23 +683,21 @@ async function sendChat(){
   input.value='';
   input.style.height='auto';
 
-  // hide suggestions after first message
   document.getElementById('chat-suggestions').style.display='none';
-
   addMessage(text,'user');
   chatHistory.push({role:'user',content:text});
   showTyping(true);
 
-  // Build context string if report exists
+  // Attach report context to first user message only
   let contextNote='';
-  if(window._lastReport){
+  if(window._lastReport && chatHistory.filter(m=>m.role==='user').length===1){
     const r=window._lastReport;
-    contextNote=`\n\n[Current report context: ${r.boyName} & ${r.girlName}, score ${r.total}/36, Rashi: ${r.info?.boy_rashi||'?'} & ${r.info?.girl_rashi||'?'}]`;
+    contextNote=` [Report context: ${r.boyName} & ${r.girlName}, score ${r.total}/36, Rashis: ${r.info?.boy_rashi||'?'} & ${r.info?.girl_rashi||'?'}, Nadi dosha: ${r.doshas?.nadi_dosha||'?'}, Bhakoot dosha: ${r.doshas?.bhakoot_dosha||'?'}]`;
   }
 
   const messages=chatHistory.map((m,i)=>({
     role:m.role,
-    content:i===0&&contextNote?m.content+contextNote:m.content
+    content:i===0?m.content+contextNote:m.content
   }));
 
   try{
@@ -681,14 +706,33 @@ async function sendChat(){
       headers:{'Content-Type':'application/json'},
       body:JSON.stringify({messages,system:SYSTEM_PROMPT})
     });
-    const data=await resp.json();
-    const reply=data.content?.[0]?.text||'Sorry, I could not respond right now. Please try again.';
+
+    let data;
+    try{ data=await resp.json(); }
+    catch(e){
+      showTyping(false);
+      addMessage('Server returned an invalid response. Please check your ANTHROPIC_API_KEY in Vercel environment variables and redeploy.','ai');
+      return;
+    }
+
+    if(!resp.ok){
+      showTyping(false);
+      const errMsg = data?.error || 'Unknown error (HTTP '+resp.status+')';
+      addMessage('Error: '+errMsg+'\n\nCheck your Vercel environment variables and redeploy.','ai');
+      return;
+    }
+
+    const reply=data.content?.[0]?.text;
     showTyping(false);
-    addMessage(reply,'ai');
-    chatHistory.push({role:'assistant',content:reply});
+    if(reply){
+      addMessage(reply,'ai');
+      chatHistory.push({role:'assistant',content:reply});
+    } else {
+      addMessage('Received an empty response. This usually means the ANTHROPIC_API_KEY is missing or invalid in Vercel settings.','ai');
+    }
   }catch(e){
     showTyping(false);
-    addMessage('Sorry, something went wrong. Please try again in a moment.','ai');
+    addMessage('Network error: '+e.message+'. Make sure your site is deployed on Vercel (not opened as a local file).','ai');
   }
 }
 
@@ -701,9 +745,45 @@ function chatKeydown(e){
   if(e.key==='Enter'&&!e.shiftKey){e.preventDefault();sendChat();}
 }
 
-function autoResize(el){
-  el.style.height='auto';
-  el.style.height=Math.min(el.scrollHeight,100)+'px';
+// ═══════════════════════════════════════════
+//  CITY AUTOCOMPLETE
+// ═══════════════════════════════════════════
+let cityTimers={};
+function citySearch(input,dropId){
+  const q=input.value.trim();
+  const drop=document.getElementById(dropId);
+  clearTimeout(cityTimers[dropId]);
+  if(q.length<2){drop.classList.remove('open');drop.innerHTML='';return;}
+  cityTimers[dropId]=setTimeout(async()=>{
+    try{
+      const r=await fetch(`https://nominatim.openstreetmap.org/search?q=${encodeURIComponent(q)}&format=json&limit=5&addressdetails=1`,{
+        headers:{'User-Agent':'kundalimatching.ai'}
+      });
+      const data=await r.json();
+      if(!data.length){drop.classList.remove('open');return;}
+      drop.innerHTML=data.map(d=>{
+        const city=d.address?.city||d.address?.town||d.address?.village||d.name||'';
+        const state=d.address?.state||'';
+        const country=d.address?.country||'';
+        const label=city+(state?', '+state:'')+(country?', '+country:'');
+        return`<div class="city-opt" onmousedown="selectCity(event,'${input.id}','${dropId}','${label.replace(/'/g,"\\'")}','${d.lat}','${d.lon}')">${city}<small>${state}${state&&country?', ':''}${country}</small></div>`;
+      }).join('');
+      drop.classList.add('open');
+    }catch(e){drop.classList.remove('open');}
+  },350);
+}
+
+function selectCity(e,inputId,dropId,label,lat,lon){
+  e.preventDefault();
+  const input=document.getElementById(inputId);
+  input.value=label;
+  input.dataset.lat=lat;
+  input.dataset.lon=lon;
+  document.getElementById(dropId).classList.remove('open');
+}
+
+function hideDrop(dropId){
+  setTimeout(()=>document.getElementById(dropId).classList.remove('open'),200);
 }
 </script>
 </body>

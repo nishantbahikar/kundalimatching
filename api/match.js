@@ -83,6 +83,8 @@ export default async function handler(req, res) {
     }
 
     const result = matchData.data.result || matchData.data;
+    // TEMP DEBUG - remove after fixing
+    return res.status(200).json({ debug_raw: result });
     const raw    = result.koot_match_score || result.koot_details || result;
 
     // STEP 3: Parse scores

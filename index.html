@@ -52,36 +52,34 @@
   .nav-tag{font-size:11px;letter-spacing:.15em;text-transform:uppercase;color:var(--muted);}
 
   /* ── HERO ── */
-  .hero{position:relative;z-index:1;text-align:center;padding:5rem 2rem 3rem;}
-  .hero-eyebrow{font-size:11px;letter-spacing:.2em;text-transform:uppercase;color:var(--gold);margin-bottom:1.5rem;display:flex;align-items:center;justify-content:center;gap:12px;}
-  .hero-eyebrow::before,.hero-eyebrow::after{content:'';display:block;width:40px;height:.5px;background:var(--gold);}
-  h1{font-family:'Cormorant Garamond',serif;font-size:clamp(2.8rem,6vw,5rem);font-weight:300;line-height:1.1;color:var(--cream);margin-bottom:1.25rem;}
+  .hero{position:relative;z-index:1;text-align:center;padding:2.5rem 2rem 2rem;}
+  .hero-eyebrow{font-size:11px;letter-spacing:.2em;text-transform:uppercase;color:var(--gold);margin-bottom:1rem;display:flex;align-items:center;justify-content:center;gap:12px;}
+  .hero-eyebrow::before,.hero-eyebrow::after{content:'';display:block;width:32px;height:.5px;background:var(--gold);}
+  h1{font-family:'Cormorant Garamond',serif;font-size:clamp(2.2rem,5vw,3.8rem);font-weight:300;line-height:1.1;color:var(--cream);margin-bottom:1rem;}
   h1 em{color:var(--gold2);font-style:italic;}
-  .hero-sub{font-size:1rem;color:var(--muted);max-width:480px;margin:0 auto 2.5rem;line-height:1.7;}
-  .mandala{width:110px;height:110px;margin:0 auto 2rem;opacity:.18;}
-  .mandala svg{width:100%;height:100%;animation:spin 40s linear infinite;}
-  @keyframes spin{to{transform:rotate(360deg);}}
+  .hero-sub{font-size:.9rem;color:var(--muted);max-width:440px;margin:0 auto 1.5rem;line-height:1.65;}
 
   /* ── FORM ── */
-  .form-wrap{position:relative;z-index:2;max-width:860px;margin:0 auto;padding:0 1.5rem 4rem;}
-  .form-card{background:var(--bg2);border:.5px solid var(--gold-border);border-radius:16px;padding:2.5rem;}
-  .form-grid{display:grid;grid-template-columns:1fr 1fr;gap:2rem;}
-  .person-block{background:var(--bg3);border:.5px solid rgba(201,168,76,.14);border-radius:12px;padding:1.75rem;}
-  .person-label{font-family:'Cormorant Garamond',serif;font-size:1.2rem;font-weight:400;color:var(--gold2);margin-bottom:1.25rem;display:flex;align-items:center;gap:8px;}
-  .pdot{width:8px;height:8px;border-radius:50%;}
-  .field{margin-bottom:1rem;}
-  label{display:block;font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);margin-bottom:6px;}
-  input,select{width:100%;background:var(--bg);border:.5px solid rgba(201,168,76,.2);border-radius:var(--r);color:var(--cream);font-family:'DM Sans',sans-serif;font-size:14px;font-weight:300;padding:10px 14px;outline:none;transition:border-color .2s;-webkit-appearance:none;}
+  .form-wrap{position:relative;z-index:2;max-width:820px;margin:0 auto;padding:0 1rem 3rem;}
+  .form-card{background:var(--bg2);border:.5px solid var(--gold-border);border-radius:16px;padding:1.75rem;}
+  .form-grid{display:grid;grid-template-columns:1fr 1fr;gap:1.5rem;}
+  .person-block{background:var(--bg3);border:.5px solid rgba(201,168,76,.14);border-radius:12px;padding:1.25rem;}
+  .person-label{font-family:'Cormorant Garamond',serif;font-size:1.1rem;font-weight:400;color:var(--gold2);margin-bottom:1rem;display:flex;align-items:center;gap:8px;}
+  .pdot{width:7px;height:7px;border-radius:50%;}
+  .field{margin-bottom:.8rem;}
+  label{display:block;font-size:10px;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);margin-bottom:5px;}
+  input,select{width:100%;background:var(--bg);border:.5px solid rgba(201,168,76,.2);border-radius:var(--r);color:var(--cream);font-family:'DM Sans',sans-serif;font-size:13px;font-weight:300;padding:9px 12px;outline:none;transition:border-color .2s;-webkit-appearance:none;-moz-appearance:textfield;}
   input:focus,select:focus{border-color:var(--gold);}
+  input::-webkit-outer-spin-button,input::-webkit-inner-spin-button{-webkit-appearance:none;margin:0;}
   select option{background:#1c1916;}
-  input[type="date"]::-webkit-calendar-picker-indicator,input[type="time"]::-webkit-calendar-picker-indicator{filter:invert(.6) sepia(1) saturate(2) hue-rotate(10deg);}
-  .field-row{display:grid;grid-template-columns:1fr 1fr;gap:10px;}
-  .submit-wrap{text-align:center;margin-top:2rem;}
-  .btn-submit{background:var(--gold);color:#0c0a08;border:none;border-radius:var(--r);font-family:'DM Sans',sans-serif;font-size:14px;font-weight:500;letter-spacing:.08em;padding:14px 3rem;cursor:pointer;transition:background .2s,transform .15s;}
+  .field-row{display:grid;grid-template-columns:1fr 1fr;gap:8px;}
+  .field-row3{display:grid;grid-template-columns:1fr 1fr 1.4fr;gap:6px;}
+  .submit-wrap{text-align:center;margin-top:1.5rem;}
+  .btn-submit{background:var(--gold);color:#0c0a08;border:none;border-radius:var(--r);font-family:'DM Sans',sans-serif;font-size:14px;font-weight:500;letter-spacing:.08em;padding:13px 2.5rem;cursor:pointer;transition:background .2s,transform .15s;}
   .btn-submit:hover{background:var(--gold2);transform:translateY(-1px);}
   .btn-submit:active{transform:scale(.98);}
   .btn-submit:disabled{opacity:.5;cursor:not-allowed;transform:none;}
-  .disclaimer-small{font-size:11px;color:var(--dimmer);margin-top:1rem;line-height:1.6;max-width:500px;margin-left:auto;margin-right:auto;}
+  .disclaimer-small{font-size:11px;color:var(--dimmer);margin-top:.75rem;line-height:1.5;max-width:460px;margin-left:auto;margin-right:auto;}
 
   /* ── LOADING ── */
   #loading{display:none;text-align:center;padding:4rem 1rem;position:relative;z-index:2;}
@@ -228,13 +226,19 @@
   .footer-note{font-size:11px;color:var(--dimmer);}
 
   @media(max-width:640px){
-    nav{padding:1.25rem;}
+    nav{padding:1rem 1.25rem;}
+    .nav-tag{display:none;}
     .form-grid,.profiles-mini,.dosha-grid{grid-template-columns:1fr;}
-    .form-card{padding:1.5rem;}
-    h1{font-size:2.4rem;}
-    footer{padding:1.25rem;}
-    #chat-window{bottom:88px;right:16px;width:calc(100vw - 32px);}
-    #chat-bubble{bottom:20px;right:16px;}
+    .form-card{padding:1rem;}
+    .person-block{padding:1rem;}
+    h1{font-size:2rem;}
+    .hero{padding:1.75rem 1rem 1.5rem;}
+    footer{padding:1rem 1.25rem;}
+    #chat-window{bottom:88px;right:12px;width:calc(100vw - 24px);}
+    #chat-bubble{bottom:18px;right:14px;width:48px;height:48px;}
+    .score-section{gap:1rem;}
+    .results-wrap{padding:0 1rem 4rem;}
+    .field-row3{grid-template-columns:1fr 1fr 1.2fr;}
   }
 
   /* city autocomplete */
@@ -258,24 +262,6 @@
 
 <!-- HERO -->
 <section class="hero">
-  <div class="mandala">
-    <svg viewBox="0 0 120 120" fill="none" xmlns="http://www.w3.org/2000/svg">
-      <circle cx="60" cy="60" r="58" stroke="#c9a84c" stroke-width=".5"/>
-      <circle cx="60" cy="60" r="47" stroke="#c9a84c" stroke-width=".5"/>
-      <circle cx="60" cy="60" r="34" stroke="#c9a84c" stroke-width=".5"/>
-      <circle cx="60" cy="60" r="19" stroke="#c9a84c" stroke-width=".5"/>
-      <circle cx="60" cy="60" r="6" stroke="#c9a84c" stroke-width=".8"/>
-      <ellipse cx="60" cy="25" rx="5" ry="12" fill="#c9a84c" opacity=".35" transform="rotate(0 60 60)"/>
-      <ellipse cx="60" cy="25" rx="5" ry="12" fill="#c9a84c" opacity=".35" transform="rotate(45 60 60)"/>
-      <ellipse cx="60" cy="25" rx="5" ry="12" fill="#c9a84c" opacity=".35" transform="rotate(90 60 60)"/>
-      <ellipse cx="60" cy="25" rx="5" ry="12" fill="#c9a84c" opacity=".35" transform="rotate(135 60 60)"/>
-      <ellipse cx="60" cy="25" rx="5" ry="12" fill="#c9a84c" opacity=".35" transform="rotate(180 60 60)"/>
-      <ellipse cx="60" cy="25" rx="5" ry="12" fill="#c9a84c" opacity=".35" transform="rotate(225 60 60)"/>
-      <ellipse cx="60" cy="25" rx="5" ry="12" fill="#c9a84c" opacity=".35" transform="rotate(270 60 60)"/>
-      <ellipse cx="60" cy="25" rx="5" ry="12" fill="#c9a84c" opacity=".35" transform="rotate(315 60 60)"/>
-      <polygon points="60,42 62,56 76,56 65,65 69,79 60,70 51,79 55,65 44,56 58,56" fill="#c9a84c" opacity=".25"/>
-    </svg>
-  </div>
   <div class="hero-eyebrow">Ashtakoot Guna Milan</div>
   <h1>Know if the stars <em>align</em><br>for your union</h1>
   <p class="hero-sub">Enter both birth details below. We calculate all 8 Koot scores, check key doshas via Prokerala's verified API, and give you an AI-interpreted reading — in under a minute.</p>
@@ -288,10 +274,21 @@
       <div class="person-block">
         <div class="person-label"><span class="pdot" style="background:#7eb8d4;"></span>Boy / Groom</div>
         <div class="field"><label>Full name</label><input type="text" id="boy-name" placeholder="e.g. Arjun Sharma"></div>
-        <div class="field"><label>Date of birth</label><input type="date" id="boy-dob"></div>
-        <div class="field-row">
-          <div class="field"><label>Time of birth</label><input type="time" id="boy-time"></div>
-          <div class="field"><label>AM / PM</label><select id="boy-ampm"><option value="AM">AM</option><option value="PM" selected>PM</option></select></div>
+        <div class="field">
+          <label>Date of birth</label>
+          <div class="field-row3">
+            <input type="number" id="boy-dd" placeholder="DD" min="1" max="31" oninput="limitLen(this,2)">
+            <input type="number" id="boy-mm" placeholder="MM" min="1" max="12" oninput="limitLen(this,2)">
+            <input type="number" id="boy-yyyy" placeholder="YYYY" min="1900" max="2099" oninput="limitLen(this,4)">
+          </div>
+        </div>
+        <div class="field">
+          <label>Time of birth</label>
+          <div class="field-row3">
+            <input type="number" id="boy-hh" placeholder="HH" min="1" max="12" oninput="limitLen(this,2)">
+            <input type="number" id="boy-min" placeholder="MM" min="0" max="59" oninput="limitLen(this,2)">
+            <select id="boy-ampm"><option value="AM">AM</option><option value="PM" selected>PM</option></select>
+          </div>
         </div>
         <div class="field"><label>Birth city</label>
           <div class="city-wrap">
@@ -303,10 +300,21 @@
       <div class="person-block">
         <div class="person-label"><span class="pdot" style="background:#d4a0b0;"></span>Girl / Bride</div>
         <div class="field"><label>Full name</label><input type="text" id="girl-name" placeholder="e.g. Priya Patel"></div>
-        <div class="field"><label>Date of birth</label><input type="date" id="girl-dob"></div>
-        <div class="field-row">
-          <div class="field"><label>Time of birth</label><input type="time" id="girl-time"></div>
-          <div class="field"><label>AM / PM</label><select id="girl-ampm"><option value="AM" selected>AM</option><option value="PM">PM</option></select></div>
+        <div class="field">
+          <label>Date of birth</label>
+          <div class="field-row3">
+            <input type="number" id="girl-dd" placeholder="DD" min="1" max="31" oninput="limitLen(this,2)">
+            <input type="number" id="girl-mm" placeholder="MM" min="1" max="12" oninput="limitLen(this,2)">
+            <input type="number" id="girl-yyyy" placeholder="YYYY" min="1900" max="2099" oninput="limitLen(this,4)">
+          </div>
+        </div>
+        <div class="field">
+          <label>Time of birth</label>
+          <div class="field-row3">
+            <input type="number" id="girl-hh" placeholder="HH" min="1" max="12" oninput="limitLen(this,2)">
+            <input type="number" id="girl-min" placeholder="MM" min="0" max="59" oninput="limitLen(this,2)">
+            <select id="girl-ampm"><option value="AM" selected>AM</option><option value="PM">PM</option></select>
+          </div>
         </div>
         <div class="field"><label>Birth city</label>
           <div class="city-wrap">
@@ -470,10 +478,41 @@ function doshaClass(v){
   return{cls:'ds-flag',label:'Present'};
 }
 
-function formatDob(dateStr,timeStr){
-  // Returns ISO 8601 with IST offset for Prokerala
+function limitLen(el, max) {
+  // Strip non-digits and cap at max chars
+  let v = el.value.replace(/\D/g,'');
+  if(v.length > max) v = v.slice(0, max);
+  el.value = v;
+  // Enforce range limits
+  if(v.length === max) {
+    const n = parseInt(v);
+    if(n < el.min) el.value = el.min;
+    if(n > el.max) el.value = el.max;
+  }
+}
+
+function buildDob(prefix) {
+  const dd   = (document.getElementById(prefix+'-dd')?.value   || '').padStart(2,'0');
+  const mm   = (document.getElementById(prefix+'-mm')?.value   || '').padStart(2,'0');
+  const yyyy =  document.getElementById(prefix+'-yyyy')?.value || '';
+  if(!dd||!mm||!yyyy||yyyy.length!==4) return null;
+  return `${yyyy}-${mm}-${dd}`; // YYYY-MM-DD
+}
+
+function buildTime24(prefix) {
+  // Reads HH (1-12), MM, AM/PM and returns 24hr HH:MM for ISO string
+  const hhRaw = parseInt(document.getElementById(prefix+'-hh')?.value  || '0');
+  const mmRaw = parseInt(document.getElementById(prefix+'-min')?.value || '0');
+  const ampm  = document.getElementById(prefix+'-ampm')?.value || 'AM';
+  if(!hhRaw) return '00:00';
+  let hh = hhRaw % 12; // 12 AM → 0, 12 PM → 12
+  if(ampm === 'PM') hh += 12;
+  return `${String(hh).padStart(2,'0')}:${String(mmRaw).padStart(2,'0')}`;
+}
+
+function formatDob(dateStr, time24) {
   if(!dateStr) return null;
-  const t = timeStr||'00:00';
+  const t = time24 || '00:00';
   return `${dateStr}T${t}:00+05:30`;
 }
 
@@ -483,29 +522,27 @@ function setStep(n){
   });
 }
 
-// ═══════════════════════════════════════════
-//  GEOCODE (city → lat/lon via proxy)
-// ═══════════════════════════════════════════
 async function geocode(city){
   const r = await fetch(`/api/geocode?city=${encodeURIComponent(city)}`);
   if(!r.ok) throw new Error(`Could not find coordinates for "${city}". Please check the city name.`);
   return r.json();
 }
 
-// ═══════════════════════════════════════════
-//  MAIN MATCH FUNCTION
-// ═══════════════════════════════════════════
 async function runMatch(){
   const boyName  = document.getElementById('boy-name').value.trim()||'Boy';
   const girlName = document.getElementById('girl-name').value.trim()||'Girl';
-  const boyDob   = document.getElementById('boy-dob').value;
-  const girlDob  = document.getElementById('girl-dob').value;
-  const boyTime  = document.getElementById('boy-time').value;
-  const girlTime = document.getElementById('girl-time').value;
-  const boyCity  = document.getElementById('boy-city').value.trim()||'Mumbai';
-  const girlCity = document.getElementById('girl-city').value.trim()||'Mumbai';
+  const boyDobRaw  = buildDob('boy');
+  const girlDobRaw = buildDob('girl');
+  const boyTime24  = buildTime24('boy');
+  const girlTime24 = buildTime24('girl');
+  const boyCity    = document.getElementById('boy-city').value.trim()||'Mumbai';
+  const girlCity   = document.getElementById('girl-city').value.trim()||'Mumbai';
 
-  if(!boyDob||!girlDob){alert('Please fill in both dates of birth.');return;}
+  if(!boyDobRaw)  { alert('Please fill in the boy\'s complete date of birth (DD, MM, YYYY).'); return; }
+  if(!girlDobRaw) { alert('Please fill in the girl\'s complete date of birth (DD, MM, YYYY).'); return; }
+
+  const boyDob  = formatDob(boyDobRaw,  boyTime24);
+  const girlDob = formatDob(girlDobRaw, girlTime24);
 
   document.getElementById('form-section').style.display='none';
   document.getElementById('loading').style.display='block';
@@ -513,7 +550,6 @@ async function runMatch(){
   setStep(0);
 
   try{
-    // Step 1: Geocode (use cached coords from autocomplete if available)
     setStep(1);
     const boyCityEl  = document.getElementById('boy-city');
     const girlCityEl = document.getElementById('girl-city');
@@ -756,21 +792,38 @@ function citySearch(input,dropId){
   if(q.length<2){drop.classList.remove('open');drop.innerHTML='';return;}
   cityTimers[dropId]=setTimeout(async()=>{
     try{
-      const r=await fetch(`https://nominatim.openstreetmap.org/search?q=${encodeURIComponent(q)}&format=json&limit=5&addressdetails=1`,{
-        headers:{'User-Agent':'kundalimatch.ai'}
-      });
-      const data=await r.json();
-      if(!data.length){drop.classList.remove('open');return;}
-      drop.innerHTML=data.map(d=>{
-        const city=d.address?.city||d.address?.town||d.address?.village||d.name||'';
-        const state=d.address?.state||'';
-        const country=d.address?.country||'';
-        const label=city+(state?', '+state:'')+(country?', '+country:'');
-        return`<div class="city-opt" onmousedown="selectCity(event,'${input.id}','${dropId}','${label.replace(/'/g,"\\'")}','${d.lat}','${d.lon}')">${city}<small>${state}${state&&country?', ':''}${country}</small></div>`;
+      // Two parallel searches: India first, then global
+      const [indiaRes, globalRes] = await Promise.all([
+        fetch(`https://nominatim.openstreetmap.org/search?q=${encodeURIComponent(q)}&format=json&limit=5&addressdetails=1&countrycodes=in`,{headers:{'User-Agent':'kundalimatch.ai'}}),
+        fetch(`https://nominatim.openstreetmap.org/search?q=${encodeURIComponent(q)}&format=json&limit=4&addressdetails=1`,{headers:{'User-Agent':'kundalimatch.ai'}})
+      ]);
+      const [india, global] = await Promise.all([indiaRes.json(), globalRes.json()]);
+
+      // Merge: India results first, then non-India global, deduplicated by display_name city+state
+      const seen = new Set();
+      const merged = [];
+      for(const d of [...india, ...global]) {
+        const city  = d.address?.city || d.address?.town || d.address?.village || d.name || '';
+        const state = d.address?.state || '';
+        const key   = (city+state).toLowerCase().replace(/\s/g,'');
+        if(!key || seen.has(key)) continue;
+        seen.add(key);
+        merged.push({...d, _city:city, _state:state, _country:d.address?.country||''});
+        if(merged.length >= 6) break;
+      }
+
+      if(!merged.length){drop.classList.remove('open');return;}
+      drop.innerHTML=merged.map(d=>{
+        const isIndia = d._country.toLowerCase().includes('india');
+        const label   = d._city + (d._state ? ', '+d._state : '') + (isIndia ? '' : ', '+d._country);
+        return`<div class="city-opt" onmousedown="selectCity(event,'${input.id}','${dropId}','${label.replace(/'/g,"\\'")}','${d.lat}','${d.lon}')">
+          ${d._city}
+          <small>${d._state}${d._state&&!isIndia?', ':!isIndia&&d._country?'':''}${isIndia?'India':d._country}</small>
+        </div>`;
       }).join('');
       drop.classList.add('open');
     }catch(e){drop.classList.remove('open');}
-  },350);
+  },320);
 }
 
 function selectCity(e,inputId,dropId,label,lat,lon){

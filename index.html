@@ -273,19 +273,26 @@
     <div class="form-grid">
       <div class="person-block">
         <div class="person-label"><span class="pdot" style="background:#7eb8d4;"></span>Boy / Groom</div>
-        <div class="field"><label>Full name</label><input type="text" id="boy-name" placeholder="e.g. Arjun Sharma"></div>
+        <div class="field">
+          <label>Full name</label>
+          <div class="city-wrap">
+            <input type="text" id="boy-name" placeholder="e.g. Arjun Sharma" autocomplete="off"
+              oninput="showNameSuggestions('boy')" onblur="hideNameDrop('boy')">
+            <div class="city-dropdown" id="boy-name-drop" style="display:none;"></div>
+          </div>
+        </div>
         <div class="field">
           <label>Date of birth</label>
           <div class="field-row3">
-            <input type="number" id="boy-dd" placeholder="DD" min="1" max="31" oninput="limitLen(this,2)">
-            <input type="number" id="boy-mm" placeholder="MM" min="1" max="12" oninput="limitLen(this,2)">
-            <input type="number" id="boy-yyyy" placeholder="YYYY" min="1900" max="2099" oninput="limitLen(this,4)">
+            <input type="number" id="boy-dd" placeholder="DD" min="1" max="31" data-next="boy-mm" oninput="limitLen(this,2)">
+            <input type="number" id="boy-mm" placeholder="MM" min="1" max="12" data-next="boy-yyyy" oninput="limitLen(this,2)">
+            <input type="number" id="boy-yyyy" placeholder="YYYY" min="1900" max="2099" data-next="boy-hh" oninput="limitLen(this,4)">
           </div>
         </div>
         <div class="field">
           <label>Time of birth</label>
           <div class="field-row3">
-            <input type="number" id="boy-hh" placeholder="HH" min="1" max="12" oninput="limitLen(this,2)">
+            <input type="number" id="boy-hh" placeholder="HH" min="1" max="12" data-next="boy-min" oninput="limitLen(this,2)">
             <input type="number" id="boy-min" placeholder="MM" min="0" max="59" oninput="limitLen(this,2)">
             <select id="boy-ampm"><option value="AM">AM</option><option value="PM" selected>PM</option></select>
           </div>
@@ -299,19 +306,26 @@
       </div>
       <div class="person-block">
         <div class="person-label"><span class="pdot" style="background:#d4a0b0;"></span>Girl / Bride</div>
-        <div class="field"><label>Full name</label><input type="text" id="girl-name" placeholder="e.g. Priya Patel"></div>
+        <div class="field">
+          <label>Full name</label>
+          <div class="city-wrap">
+            <input type="text" id="girl-name" placeholder="e.g. Priya Patel" autocomplete="off"
+              oninput="showNameSuggestions('girl')" onblur="hideNameDrop('girl')">
+            <div class="city-dropdown" id="girl-name-drop" style="display:none;"></div>
+          </div>
+        </div>
         <div class="field">
           <label>Date of birth</label>
           <div class="field-row3">
-            <input type="number" id="girl-dd" placeholder="DD" min="1" max="31" oninput="limitLen(this,2)">
-            <input type="number" id="girl-mm" placeholder="MM" min="1" max="12" oninput="limitLen(this,2)">
-            <input type="number" id="girl-yyyy" placeholder="YYYY" min="1900" max="2099" oninput="limitLen(this,4)">
+            <input type="number" id="girl-dd" placeholder="DD" min="1" max="31" data-next="girl-mm" oninput="limitLen(this,2)">
+            <input type="number" id="girl-mm" placeholder="MM" min="1" max="12" data-next="girl-yyyy" oninput="limitLen(this,2)">
+            <input type="number" id="girl-yyyy" placeholder="YYYY" min="1900" max="2099" data-next="girl-hh" oninput="limitLen(this,4)">
           </div>
         </div>
         <div class="field">
           <label>Time of birth</label>
           <div class="field-row3">
-            <input type="number" id="girl-hh" placeholder="HH" min="1" max="12" oninput="limitLen(this,2)">
+            <input type="number" id="girl-hh" placeholder="HH" min="1" max="12" data-next="girl-min" oninput="limitLen(this,2)">
             <input type="number" id="girl-min" placeholder="MM" min="0" max="59" oninput="limitLen(this,2)">
             <select id="girl-ampm"><option value="AM" selected>AM</option><option value="PM">PM</option></select>
           </div>
@@ -478,16 +492,107 @@ function doshaClass(v){
   return{cls:'ds-flag',label:'Present'};
 }
 
+// ═══════════════════════════════════════════
+//  PROFILE CACHE (localStorage)
+// ═══════════════════════════════════════════
+const CACHE_KEY = 'km_profiles';
+
+function saveProfile(data) {
+  try {
+    const existing = JSON.parse(localStorage.getItem(CACHE_KEY) || '[]');
+    // Avoid duplicates — match on name
+    const filtered = existing.filter(p => p.name.toLowerCase() !== data.name.toLowerCase());
+    filtered.unshift(data); // newest first
+    localStorage.setItem(CACHE_KEY, JSON.stringify(filtered.slice(0, 20)));
+  } catch(e) {}
+}
+
+function getProfiles() {
+  try { return JSON.parse(localStorage.getItem(CACHE_KEY) || '[]'); } catch(e) { return []; }
+}
+
+function fillProfile(prefix, p) {
+  document.getElementById(prefix+'-name').value  = p.name  || '';
+  document.getElementById(prefix+'-dd').value    = p.dd    || '';
+  document.getElementById(prefix+'-mm').value    = p.mm    || '';
+  document.getElementById(prefix+'-yyyy').value  = p.yyyy  || '';
+  document.getElementById(prefix+'-hh').value    = p.hh    || '';
+  document.getElementById(prefix+'-min').value   = p.min   || '';
+  document.getElementById(prefix+'-ampm').value  = p.ampm  || 'AM';
+  const cityEl = document.getElementById(prefix+'-city');
+  cityEl.value = p.city || '';
+  if(p.lat) cityEl.dataset.lat = p.lat;
+  if(p.lon) cityEl.dataset.lon = p.lon;
+  hideNameDrop(prefix);
+}
+
+function showNameSuggestions(prefix) {
+  const input = document.getElementById(prefix+'-name');
+  const q = input.value.trim().toLowerCase();
+  const drop = document.getElementById(prefix+'-name-drop');
+  if(!q) { drop.style.display='none'; return; }
+  const matches = getProfiles().filter(p => p.name.toLowerCase().startsWith(q));
+  if(!matches.length) { drop.style.display='none'; return; }
+  drop.innerHTML = matches.map(p =>
+    `<div class="city-opt" onmousedown="fillProfile('${prefix}',${JSON.stringify(p).replace(/"/g,'&quot;')})">${p.name}<small>${p.dd||'?'}/${p.mm||'?'}/${p.yyyy||'?'} · ${p.city||''}</small></div>`
+  ).join('');
+  drop.style.display = 'block';
+}
+
+function hideNameDrop(prefix) {
+  setTimeout(() => {
+    const el = document.getElementById(prefix+'-name-drop');
+    if(el) el.style.display='none';
+  }, 150);
+}
+
+// Save profiles when match runs successfully
+function cacheCurrentProfiles(boyName,girlName,boyCity,boyGeoLat,boyGeoLon,girlGeoLat,girlGeoLon) {
+  const boy = {
+    name:  boyName,
+    dd:    document.getElementById('boy-dd').value,
+    mm:    document.getElementById('boy-mm').value,
+    yyyy:  document.getElementById('boy-yyyy').value,
+    hh:    document.getElementById('boy-hh').value,
+    min:   document.getElementById('boy-min').value,
+    ampm:  document.getElementById('boy-ampm').value,
+    city:  document.getElementById('boy-city').value,
+    lat:   boyGeoLat, lon: boyGeoLon,
+  };
+  const girl = {
+    name:  girlName,
+    dd:    document.getElementById('girl-dd').value,
+    mm:    document.getElementById('girl-mm').value,
+    yyyy:  document.getElementById('girl-yyyy').value,
+    hh:    document.getElementById('girl-hh').value,
+    min:   document.getElementById('girl-min').value,
+    ampm:  document.getElementById('girl-ampm').value,
+    city:  document.getElementById('girl-city').value,
+    lat:   girlGeoLat, lon: girlGeoLon,
+  };
+  if(boy.name  && boy.name  !== 'Boy')  saveProfile(boy);
+  if(girl.name && girl.name !== 'Girl') saveProfile(girl);
+}
+
+// ═══════════════════════════════════════════
+//  INPUT HELPERS — limit length + auto-advance
+// ═══════════════════════════════════════════
 function limitLen(el, max) {
-  // Strip non-digits and cap at max chars
   let v = el.value.replace(/\D/g,'');
   if(v.length > max) v = v.slice(0, max);
-  el.value = v;
-  // Enforce range limits
+  // Enforce min/max range
   if(v.length === max) {
-    const n = parseInt(v);
-    if(n < el.min) el.value = el.min;
-    if(n > el.max) el.value = el.max;
+    const n = parseInt(v,10);
+    if(!isNaN(n)) {
+      if(n < parseInt(el.min,10)) v = String(el.min).padStart(max,'0');
+      if(n > parseInt(el.max,10)) v = String(el.max).padStart(max,'0');
+    }
+  }
+  el.value = v;
+  // Auto-advance when filled
+  if(v.length === max && el.dataset.next) {
+    const next = document.getElementById(el.dataset.next);
+    if(next) { next.focus(); next.select(); }
   }
 }
 
@@ -562,6 +667,9 @@ async function runMatch(){
       [boyGeo, girlGeo] = await Promise.all([geocode(boyCity), geocode(girlCity)]);
     }
 
+    // Cache profiles for future autofill
+    cacheCurrentProfiles(boyName, girlName, boyCity, boyGeo.lat, boyGeo.lon, girlGeo.lat, girlGeo.lon);
+
     // Step 2+3: Prokerala via proxy
     setStep(2);
     const resp = await fetch('/api/match',{
@@ -569,8 +677,8 @@ async function runMatch(){
       headers:{'Content-Type':'application/json'},
       body:JSON.stringify({
         boyName,girlName,
-        boyDob:formatDob(boyDob,boyTime),
-        girlDob:formatDob(girlDob,girlTime),
+        boyDob,
+        girlDob,
         boyLat:boyGeo.lat,boyLon:boyGeo.lon,
         girlLat:girlGeo.lat,girlLon:girlGeo.lon
       })
@@ -581,9 +689,9 @@ async function runMatch(){
 
     // Step 4: Claude interpretation (done inside proxy)
     setStep(4);
-    await new Promise(r=>setTimeout(r,600)); // let user see step 4
+    await new Promise(r=>setTimeout(r,600));
 
-    renderResults(data,boyName,girlName,boyDob,girlDob,boyCity,girlCity,boyTime,girlTime);
+    renderResults(data,boyName,girlName,boyDobRaw,girlDobRaw,boyCity,girlCity,boyTime24,girlTime24);
 
   }catch(e){
     document.getElementById('loading').style.display='none';
@@ -596,7 +704,7 @@ async function runMatch(){
 // ═══════════════════════════════════════════
 //  RENDER RESULTS
 // ═══════════════════════════════════════════
-function renderResults(data,boyName,girlName,boyDob,girlDob,boyCity,girlCity,boyTime,girlTime){
+function renderResults(data,boyName,girlName,boyDob,girlDob,boyCity,girlCity,boyTime24,girlTime24){
   document.getElementById('loading').style.display='none';
 
   const scores = data.scores||{};
@@ -624,15 +732,13 @@ function renderResults(data,boyName,girlName,boyDob,girlDob,boyCity,girlCity,boy
       <div class="pmc-name">${boyName}</div>
       <div class="pmc-row">Rashi: <span>${info.boy_rashi||'—'}</span></div>
       <div class="pmc-row">Nakshatra: <span>${info.boy_nakshatra||'—'}</span></div>
-      <div class="pmc-row">Lagna: <span>${info.boy_lagna||'—'}</span></div>
-      <div class="pmc-row">DOB: <span>${boyDob}${boyTime?', '+boyTime:''}, ${boyCity}</span></div>
+      <div class="pmc-row">DOB: <span>${boyDob}${boyTime24&&boyTime24!=='00:00'?', '+boyTime24:''}, ${boyCity}</span></div>
     </div>
     <div class="pmc">
       <div class="pmc-name">${girlName}</div>
       <div class="pmc-row">Rashi: <span>${info.girl_rashi||'—'}</span></div>
       <div class="pmc-row">Nakshatra: <span>${info.girl_nakshatra||'—'}</span></div>
-      <div class="pmc-row">Lagna: <span>${info.girl_lagna||'—'}</span></div>
-      <div class="pmc-row">DOB: <span>${girlDob}${girlTime?', '+girlTime:''}, ${girlCity}</span></div>
+      <div class="pmc-row">DOB: <span>${girlDob}${girlTime24&&girlTime24!=='00:00'?', '+girlTime24:''}, ${girlCity}</span></div>
     </div>`;
 
   // Koot bars

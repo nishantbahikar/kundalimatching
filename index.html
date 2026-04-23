@@ -88,68 +88,112 @@
   .loader-steps{margin-top:1.5rem;display:flex;flex-direction:column;gap:6px;align-items:center;}
   .lstep{font-size:12px;color:var(--dimmer);letter-spacing:.08em;transition:color .3s;}
   .lstep.active{color:var(--gold);}
+  @keyframes pulse{0%,100%{opacity:1;}50%{opacity:.3;}}
 
   /* ── RESULTS ── */
   #results{display:none;}
-  .results-wrap{max-width:860px;margin:0 auto;padding:0 1.5rem 5rem;position:relative;z-index:2;}
-  .result-header{text-align:center;margin-bottom:2rem;padding-top:1rem;}
-  .result-header h2{font-family:'Cormorant Garamond',serif;font-size:2rem;font-weight:400;color:var(--cream);margin-bottom:.5rem;}
-  .result-header p{font-size:13px;color:var(--muted);}
+  .rp{max-width:760px;margin:0 auto;padding:1.5rem 1.25rem 5rem;position:relative;z-index:2;}
 
-  /* score ring */
-  .score-section{display:flex;align-items:center;justify-content:center;gap:2.5rem;margin-bottom:2rem;flex-wrap:wrap;}
-  .score-ring{position:relative;width:140px;height:140px;}
-  .score-ring svg{transform:rotate(-90deg);}
-  .score-ring-inner{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;}
-  .score-num{font-family:'Cormorant Garamond',serif;font-size:2.8rem;font-weight:300;color:var(--gold2);line-height:1;}
-  .score-denom{font-size:12px;color:var(--muted);}
-  .verdict-badge{display:inline-block;font-size:12px;letter-spacing:.1em;text-transform:uppercase;padding:6px 18px;border-radius:100px;font-weight:500;margin-top:8px;}
-  .v-good{background:rgba(45,122,79,.2);color:#5fba87;border:.5px solid rgba(45,122,79,.4);}
-  .v-caution{background:rgba(184,115,51,.2);color:#e8a84a;border:.5px solid rgba(184,115,51,.4);}
-  .v-poor{background:rgba(192,57,43,.2);color:#e07060;border:.5px solid rgba(192,57,43,.4);}
+  /* section header */
+  .sh{display:flex;align-items:center;gap:10px;margin:1.5rem 0 .8rem;}
+  .sh-num{width:20px;height:20px;border-radius:50%;background:rgba(201,168,76,.1);border:.5px solid var(--gold-border);font-size:10px;font-weight:500;color:var(--gold);display:flex;align-items:center;justify-content:center;flex-shrink:0;}
+  .sh-title{font-family:'Cormorant Garamond',serif;font-size:1.1rem;color:var(--gold2);}
+  .sh-line{flex:1;height:.5px;background:var(--gold-border);}
 
-  /* profile mini */
-  .profiles-mini{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:1.5rem;}
-  .pmc{background:var(--bg2);border:.5px solid var(--gold-border);border-radius:10px;padding:1rem 1.25rem;}
-  .pmc-name{font-family:'Cormorant Garamond',serif;font-size:1.1rem;color:var(--gold2);margin-bottom:6px;}
-  .pmc-row{font-size:12px;color:var(--muted);margin:2px 0;}
-  .pmc-row span{color:var(--cream);}
+  /* verdict */
+  .verdict{background:var(--bg2);border:.5px solid var(--gold-border);border-radius:14px;padding:1.25rem 1.5rem;display:flex;align-items:center;gap:1.5rem;flex-wrap:wrap;}
+  .v-ring{position:relative;width:96px;height:96px;flex-shrink:0;}
+  .v-ring svg{transform:rotate(-90deg);}
+  .v-inner{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;}
+  .v-score{font-family:'Cormorant Garamond',serif;font-size:2.2rem;font-weight:300;line-height:1;color:var(--cream);}
+  .v-of{font-size:10px;color:var(--muted);margin-top:1px;}
+  .v-body{flex:1;min-width:180px;}
+  .v-pill{display:inline-flex;align-items:center;gap:5px;font-size:10px;font-weight:500;letter-spacing:.1em;text-transform:uppercase;padding:3px 10px;border-radius:100px;margin-bottom:8px;}
+  .vp-yes{background:rgba(45,122,79,.2);color:#5fba87;}
+  .vp-avg{background:rgba(184,115,51,.2);color:#e8a84a;}
+  .vp-no{background:rgba(192,57,43,.2);color:#e07060;}
+  .v-headline{font-family:'Cormorant Garamond',serif;font-size:1.35rem;font-weight:400;line-height:1.25;color:var(--cream);margin-bottom:5px;}
+  .v-sub{font-size:12px;color:var(--muted);line-height:1.6;margin-bottom:10px;}
+  .v-scale{display:flex;gap:5px;flex-wrap:wrap;}
+  .vs{font-size:10px;padding:2px 9px;border-radius:100px;border:.5px solid var(--gold-border);color:var(--muted);}
+  .vs-active{font-weight:500;border-color:currentColor;}
+  .vs-g{color:#5fba87;}
+  .vs-a{color:#e8a84a;}
+  .vs-r{color:#e07060;}
+
+  /* profiles */
+  .profiles{display:grid;grid-template-columns:1fr 1fr;gap:8px;}
+  .pc{background:var(--bg2);border:.5px solid var(--gold-border);border-radius:12px;padding:.9rem 1rem;}
+  .pc-top{display:flex;align-items:center;gap:10px;margin-bottom:8px;}
+  .pc-av{width:34px;height:34px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:500;flex-shrink:0;}
+  .pc-name{font-family:'Cormorant Garamond',serif;font-size:1rem;color:var(--gold2);}
+  .pc-tag{font-size:10px;color:var(--muted);}
+  .pc-row{font-size:12px;color:var(--muted);padding:3px 0;border-bottom:.5px solid rgba(201,168,76,.08);display:flex;justify-content:space-between;}
+  .pc-row:last-child{border-bottom:none;}
+  .pc-row span{color:var(--cream);}
 
   /* koot */
-  .section-title{font-family:'Cormorant Garamond',serif;font-size:1.3rem;font-weight:400;color:var(--gold2);margin-bottom:1rem;padding-bottom:8px;border-bottom:.5px solid var(--gold-border);}
-  .koot-grid{background:var(--bg2);border:.5px solid var(--gold-border);border-radius:12px;padding:1.25rem;margin-bottom:1.5rem;}
-  .koot-item{display:flex;align-items:center;gap:12px;padding:8px 0;border-bottom:.5px solid rgba(201,168,76,.07);}
-  .koot-item:last-child{border-bottom:none;}
-  .koot-n{font-size:13px;color:var(--muted);min-width:115px;}
-  .koot-bar-bg{flex:1;height:4px;background:rgba(255,255,255,.07);border-radius:2px;}
-  .koot-bar-fill{height:4px;border-radius:2px;}
-  .koot-pts{font-size:12px;color:var(--cream);min-width:44px;text-align:right;}
+  .koot-wrap{background:var(--bg2);border:.5px solid var(--gold-border);border-radius:14px;overflow:hidden;}
+  .koot-row{display:grid;grid-template-columns:120px 1fr 58px;align-items:center;gap:10px;padding:.6rem 1rem;border-bottom:.5px solid rgba(201,168,76,.07);cursor:pointer;transition:background .15s;}
+  .koot-row:hover,.koot-row.open{background:var(--bg3);}
+  .kr-label{display:flex;flex-direction:column;gap:1px;}
+  .kr-name{font-size:12px;font-weight:500;color:var(--cream);}
+  .kr-sub{font-size:10px;color:var(--muted);}
+  .kr-bar-wrap{display:flex;align-items:center;gap:6px;}
+  .kr-track{flex:1;height:3px;background:rgba(255,255,255,.08);border-radius:2px;}
+  .kr-fill{height:3px;border-radius:2px;}
+  .kr-right{display:flex;flex-direction:column;align-items:flex-end;gap:3px;}
+  .kr-score{font-family:'Cormorant Garamond',serif;font-size:1.1rem;line-height:1;color:var(--cream);}
+  .kr-badge{font-size:9px;font-weight:500;padding:1px 6px;border-radius:100px;}
+  .bs{background:rgba(45,122,79,.2);color:#5fba87;}
+  .ba{background:rgba(184,115,51,.2);color:#e8a84a;}
+  .bw{background:rgba(192,57,43,.2);color:#e07060;}
+  .koot-detail{display:none;padding:.7rem 1rem .8rem;background:var(--bg3);border-bottom:.5px solid rgba(201,168,76,.07);}
+  .koot-detail.open{display:block;}
+  .kd-text{font-size:12px;color:var(--muted);line-height:1.65;margin-bottom:.5rem;}
+  .kd-chips{display:flex;gap:6px;flex-wrap:wrap;}
+  .kd-chip{font-size:11px;background:var(--bg2);border:.5px solid var(--gold-border);padding:2px 10px;border-radius:100px;color:var(--muted);}
+  .kd-chip b{color:var(--cream);font-weight:500;}
+  .koot-total{display:flex;align-items:center;justify-content:space-between;padding:.75rem 1rem;background:var(--bg3);border-top:.5px solid var(--gold-border);}
+  .kt-left{font-size:11px;color:var(--muted);text-transform:uppercase;letter-spacing:.08em;font-weight:500;}
+  .kt-right{display:flex;align-items:center;gap:10px;}
+  .kt-verdict{font-size:11px;font-weight:500;padding:3px 10px;border-radius:100px;}
+  .kt-num{font-family:'Cormorant Garamond',serif;font-size:1.9rem;font-weight:300;line-height:1;color:var(--cream);}
+  .kt-den{font-size:12px;color:var(--muted);}
 
   /* dosha */
-  .dosha-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:1.5rem;}
-  .dosha-card{background:var(--bg2);border-radius:10px;padding:1rem 1.25rem;border:.5px solid rgba(201,168,76,.1);display:flex;justify-content:space-between;align-items:flex-start;}
-  .dosha-name{font-size:13px;color:var(--cream);}
-  .dosha-sub{font-size:11px;color:var(--muted);margin-top:2px;}
-  .ds{font-size:11px;padding:3px 10px;border-radius:100px;font-weight:500;white-space:nowrap;margin-left:8px;margin-top:2px;}
-  .ds-clear{background:rgba(45,122,79,.2);color:#5fba87;}
-  .ds-warn{background:rgba(184,115,51,.2);color:#e8a84a;}
-  .ds-flag{background:rgba(192,57,43,.2);color:#e07060;}
+  .dosha-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;}
+  .dc{background:var(--bg2);border:.5px solid var(--gold-border);border-radius:12px;padding:.9rem 1rem;}
+  .dc-top{display:flex;justify-content:space-between;align-items:center;margin-bottom:5px;}
+  .dc-name{font-size:13px;font-weight:500;color:var(--cream);}
+  .dc-badge{font-size:10px;font-weight:500;padding:2px 8px;border-radius:100px;}
+  .dc-desc{font-size:11px;color:var(--muted);line-height:1.6;}
 
-  /* AI block */
-  .ai-block{background:var(--bg2);border:.5px solid var(--gold-border);border-radius:12px;padding:1.5rem;margin-bottom:1.5rem;}
-  .ai-tag{display:inline-flex;align-items:center;gap:6px;font-size:10px;letter-spacing:.15em;text-transform:uppercase;color:var(--gold);margin-bottom:1rem;}
-  .ai-tag::before{content:'';width:6px;height:6px;border-radius:50%;background:var(--gold);display:block;animation:pulse 2s ease-in-out infinite;}
-  @keyframes pulse{0%,100%{opacity:1;}50%{opacity:.3;}}
-  .ai-text{font-size:14px;line-height:1.85;color:rgba(245,239,230,.82);}
-  .ai-text p{margin-bottom:.75rem;}
+  /* AI */
+  .ai-block{background:var(--bg2);border:.5px solid var(--gold-border);border-radius:12px;padding:1.1rem 1.25rem;}
+  .ai-top{display:flex;align-items:center;gap:7px;margin-bottom:.75rem;}
+  .ai-dot{width:6px;height:6px;border-radius:50%;background:var(--gold);animation:pulse 2s ease-in-out infinite;flex-shrink:0;}
+  .ai-lbl{font-size:10px;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);font-weight:500;}
+  .ai-text{font-size:13px;line-height:1.8;color:rgba(245,239,230,.78);}
+  .ai-text p{margin-bottom:.65rem;}
   .ai-text p:last-child{margin-bottom:0;}
 
-  /* disclaimer */
-  .disclaimer-box{background:rgba(201,168,76,.04);border:.5px solid rgba(201,168,76,.14);border-radius:10px;padding:1rem 1.25rem;font-size:12px;color:var(--dimmer);line-height:1.7;margin-bottom:1.5rem;}
-  .disclaimer-box strong{color:var(--muted);font-weight:500;}
-  .btn-reset{display:block;margin:0 auto;background:transparent;border:.5px solid var(--gold-border);color:var(--gold);border-radius:var(--r);font-family:'DM Sans',sans-serif;font-size:13px;padding:10px 2rem;cursor:pointer;transition:border-color .2s,background .2s;}
+  /* chat cta */
+  .chat-cta{background:var(--bg2);border:.5px solid var(--gold-border);border-radius:12px;padding:1rem 1.25rem;display:flex;align-items:center;gap:1rem;flex-wrap:wrap;}
+  .cta-icon{width:38px;height:38px;border-radius:10px;background:var(--gold-dim);border:.5px solid var(--gold-border);display:flex;align-items:center;justify-content:center;flex-shrink:0;}
+  .cta-body{flex:1;min-width:160px;}
+  .cta-title{font-size:13px;font-weight:500;color:var(--cream);margin-bottom:2px;}
+  .cta-sub{font-size:11px;color:var(--muted);line-height:1.5;}
+  .cta-qs{display:flex;gap:5px;flex-wrap:wrap;margin-top:7px;}
+  .cta-q{font-size:10px;background:var(--bg3);border:.5px solid var(--gold-border);padding:3px 9px;border-radius:100px;color:var(--muted);cursor:pointer;transition:color .15s;}
+  .cta-q:hover{color:var(--gold);}
+  .cta-btn{background:var(--gold);color:#0c0a08;border:none;border-radius:8px;font-family:'DM Sans',sans-serif;font-size:12px;font-weight:500;padding:9px 18px;cursor:pointer;transition:background .2s;white-space:nowrap;align-self:center;}
+  .cta-btn:hover{background:var(--gold2);}
+
+  /* footer bits */
+  .rp-disclaimer{font-size:10px;color:var(--dimmer);line-height:1.6;text-align:center;padding:.75rem .5rem 0;}
+  .btn-reset{display:block;margin:.9rem auto 0;width:fit-content;background:transparent;border:.5px solid var(--gold-border);color:var(--gold);border-radius:var(--r);font-family:'DM Sans',sans-serif;font-size:12px;padding:8px 20px;cursor:pointer;transition:border-color .2s,background .2s;}
   .btn-reset:hover{border-color:var(--gold);background:var(--gold-dim);}
-  .ornament{text-align:center;color:var(--gold);opacity:.35;font-size:16px;margin:1.5rem 0;letter-spacing:8px;}
 
   /* ── CHATBOT ── */
   #chat-bubble{position:fixed;bottom:28px;right:28px;z-index:1000;cursor:pointer;width:54px;height:54px;background:var(--gold);border-radius:50%;display:flex;align-items:center;justify-content:center;box-shadow:0 4px 24px rgba(201,168,76,.35);transition:transform .2s,background .2s;}
@@ -228,7 +272,7 @@
   @media(max-width:640px){
     nav{padding:1rem 1.25rem;}
     .nav-tag{display:none;}
-    .form-grid,.profiles-mini,.dosha-grid{grid-template-columns:1fr;}
+    .form-grid,.profiles,.dosha-grid{grid-template-columns:1fr;}
     .form-card{padding:1rem;}
     .person-block{padding:1rem;}
     h1{font-size:2rem;}
@@ -236,8 +280,9 @@
     footer{padding:1rem 1.25rem;}
     #chat-window{bottom:88px;right:12px;width:calc(100vw - 24px);}
     #chat-bubble{bottom:18px;right:14px;width:48px;height:48px;}
-    .score-section{gap:1rem;}
-    .results-wrap{padding:0 1rem 4rem;}
+    .verdict{gap:1rem;padding:1rem;}
+    .rp{padding:1rem .75rem 4rem;}
+    .koot-row{grid-template-columns:100px 1fr 52px;gap:8px;}
     .field-row3{grid-template-columns:1fr 1fr 1.2fr;}
   }
 
@@ -340,7 +385,7 @@
     </div>
     <div class="submit-wrap">
       <button class="btn-submit" id="submit-btn" onclick="runMatch()">✦ &nbsp;Calculate Compatibility</button>
-      <p class="disclaimer-small">Results use Prokerala's verified Vedic API for accuracy, interpreted by Claude AI. For guidance only — not a substitute for a qualified Jyotishi.</p>
+      <p class="disclaimer-small">Results are based on Vedic astrology principles and are for guidance only — not a substitute for a qualified Jyotishi.</p>
     </div>
   </div>
 </div>
@@ -350,64 +395,97 @@
   <div class="loader-ring"></div>
   <p class="loader-text">Reading the celestial positions…</p>
   <div class="loader-steps">
-    <span class="lstep" id="ls1">Geocoding birth locations</span>
-    <span class="lstep" id="ls2">Calling Prokerala Vedic API</span>
+    <span class="lstep" id="ls1">Finding birth coordinates</span>
+    <span class="lstep" id="ls2">Computing planetary positions</span>
     <span class="lstep" id="ls3">Calculating Ashtakoot scores</span>
-    <span class="lstep" id="ls4">Generating AI interpretation</span>
+    <span class="lstep" id="ls4">Writing your interpretation</span>
   </div>
 </div>
 
 <!-- RESULTS -->
 <div id="results">
-  <div class="results-wrap">
-    <div class="result-header">
-      <h2 id="result-title">Compatibility Report</h2>
-      <p>Generated on <span id="result-date"></span> · Powered by Prokerala API + Claude AI</p>
-    </div>
+  <div class="rp">
 
-    <div class="score-section">
-      <div style="text-align:center;">
-        <div class="score-ring">
-          <svg width="140" height="140" viewBox="0 0 140 140">
-            <circle cx="70" cy="70" r="60" stroke="rgba(201,168,76,0.14)" stroke-width="8" fill="none"/>
-            <circle id="score-arc" cx="70" cy="70" r="60" stroke="#c9a84c" stroke-width="8" fill="none" stroke-linecap="round" stroke-dasharray="377" stroke-dashoffset="377" style="transition:stroke-dashoffset 1.2s ease,stroke .3s;"/>
-          </svg>
-          <div class="score-ring-inner">
-            <div class="score-num" id="score-display">—</div>
-            <div class="score-denom">out of 36</div>
-          </div>
+    <!-- VERDICT -->
+    <div class="verdict" id="verdict-block">
+      <div class="v-ring">
+        <svg width="96" height="96" viewBox="0 0 96 96">
+          <circle cx="48" cy="48" r="40" stroke="rgba(201,168,76,0.15)" stroke-width="6" fill="none"/>
+          <circle id="v-arc" cx="48" cy="48" r="40" stroke="#5fba87" stroke-width="6" fill="none"
+            stroke-linecap="round" stroke-dasharray="251" stroke-dashoffset="251"
+            style="transition:stroke-dashoffset 1.2s ease,stroke .3s;"/>
+        </svg>
+        <div class="v-inner">
+          <div class="v-score" id="v-score">—</div>
+          <div class="v-of">of 36</div>
         </div>
-        <div id="verdict-badge" class="verdict-badge v-caution" style="margin-top:10px;">—</div>
       </div>
-      <div style="max-width:340px;">
-        <div style="font-family:'Cormorant Garamond',serif;font-size:1.5rem;color:var(--cream);margin-bottom:8px;" id="verdict-headline">—</div>
-        <div style="font-size:13px;color:var(--muted);line-height:1.7;" id="verdict-summary">—</div>
+      <div class="v-body">
+        <div class="v-pill vp-yes" id="v-pill">—</div>
+        <div class="v-headline" id="v-headline">—</div>
+        <div class="v-sub" id="v-sub">—</div>
+        <div class="v-scale" id="v-scale"></div>
       </div>
     </div>
 
-    <div class="profiles-mini" id="profile-cards"></div>
-    <div class="ornament">✦ · ✦ · ✦</div>
-    <div class="section-title">Ashtakoot guna breakdown</div>
-    <div class="koot-grid" id="koot-grid"></div>
-    <div class="ornament">✦ · ✦ · ✦</div>
-    <div class="section-title">Key dosha check</div>
+    <!-- 1. PROFILES -->
+    <div class="sh"><div class="sh-num">1</div><div class="sh-title">Birth profiles</div><div class="sh-line"></div></div>
+    <div class="profiles" id="profile-cards"></div>
+
+    <!-- 2. ASHTAKOOT -->
+    <div class="sh"><div class="sh-num">2</div><div class="sh-title">Ashtakoot scores</div><div class="sh-line"></div></div>
+    <div class="koot-wrap">
+      <div id="koot-rows"></div>
+      <div class="koot-total">
+        <div class="kt-left">Total score</div>
+        <div class="kt-right">
+          <span class="kt-verdict bs" id="kt-verdict">—</span>
+          <span class="kt-num" id="kt-num">—</span>
+          <span class="kt-den">/ 36</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- 3. DOSHAS -->
+    <div class="sh"><div class="sh-num">3</div><div class="sh-title">Dosha check</div><div class="sh-line"></div></div>
     <div class="dosha-grid" id="dosha-grid"></div>
-    <div class="ornament">✦ · ✦ · ✦</div>
-    <div class="section-title">AI interpretation</div>
+
+    <!-- 4. INTERPRETATION -->
+    <div class="sh"><div class="sh-num">4</div><div class="sh-title">Interpretation</div><div class="sh-line"></div></div>
     <div class="ai-block">
-      <div class="ai-tag">AI generated · Claude by Anthropic</div>
+      <div class="ai-top"><div class="ai-dot"></div><div class="ai-lbl">AI generated · For guidance only</div></div>
       <div class="ai-text" id="ai-text">—</div>
     </div>
-    <div class="disclaimer-box">
-      <strong>Disclaimer:</strong> Ashtakoot scores are calculated by Prokerala's verified Vedic astrology engine using the Swiss Ephemeris and Lahiri ayanamsha. The interpretation is generated by Claude AI (Anthropic) and is for informational and guidance purposes only. kundalimatch.ai does not guarantee accuracy and this report should not be the sole basis for any marriage decision. Please consult a certified Jyotish practitioner for authoritative guidance.
+
+    <!-- 5. CHAT CTA -->
+    <div class="sh"><div class="sh-num">5</div><div class="sh-title">Still have doubts?</div><div class="sh-line"></div></div>
+    <div class="chat-cta">
+      <div class="cta-icon">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="var(--gold)" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/>
+        </svg>
+      </div>
+      <div class="cta-body">
+        <div class="cta-title">Ask the Jyotishi AI</div>
+        <div class="cta-sub">Get plain-language answers to any kundali question</div>
+        <div class="cta-qs">
+          <span class="cta-q" onclick="openChatWith('What is Nadi dosha?')">What is Nadi dosha?</span>
+          <span class="cta-q" onclick="openChatWith('Can doshas be cancelled?')">Can doshas be cancelled?</span>
+          <span class="cta-q" onclick="openChatWith('What does Bhakoot mean?')">What does Bhakoot mean?</span>
+          <span class="cta-q" onclick="openChatWith('Remedies for low score?')">Remedies for low score?</span>
+        </div>
+      </div>
+      <button class="cta-btn" onclick="toggleChat()">Ask now ↗</button>
     </div>
-    <button class="btn-reset" onclick="resetForm()">← Start a new match</button>
+
+    <div class="rp-disclaimer">Results are based on Vedic astrology principles and are for informational guidance only. Not a substitute for consultation with a qualified Jyotishi.</div>
+    <button class="btn-reset" onclick="resetForm()">← New match</button>
   </div>
 </div>
 
 <footer>
   <div class="footer-logo">kundalimatch.ai</div>
-  <div class="footer-note">Prokerala Vedic API · Claude AI · For guidance only</div>
+  <div class="footer-note">Vedic astrology · AI interpreted · For guidance only</div>
 </footer>
 
 <!-- ── CHATBOT ── -->
@@ -467,31 +545,6 @@
 <script>
 // ═══════════════════════════════════════════
 //  CONSTANTS
-// ═══════════════════════════════════════════
-const KOOTS = [
-  {name:'Varna',max:1},{name:'Vashya',max:2},{name:'Tara',max:3},
-  {name:'Yoni',max:4},{name:'Graha Maitri',max:5},{name:'Gana',max:6},
-  {name:'Bhakoot',max:7},{name:'Nadi',max:8}
-];
-
-// ═══════════════════════════════════════════
-//  HELPERS
-// ═══════════════════════════════════════════
-function barColor(s,m){const p=s/m;return p>=.75?'#5fba87':p>=.4?'#e8a84a':'#e07060';}
-
-function verdictInfo(score){
-  if(score>=28) return{cls:'v-good',label:'Excellent match',headline:'An auspicious union',summary:'The stars are strongly aligned. This pairing scores in the top tier, showing deep compatibility across emotional, physical, and spiritual dimensions.'};
-  if(score>=24) return{cls:'v-good',label:'Good match',headline:'Recommended with confidence',summary:'A strong match by traditional standards. Most critical koots score well, indicating a stable, harmonious partnership with good long-term prospects.'};
-  if(score>=18) return{cls:'v-caution',label:'Average match',headline:'Proceed with awareness',summary:'An acceptable match, but certain areas need attention. Remedial measures or a deeper chart review by a Jyotishi is advisable before finalising.'};
-  return{cls:'v-poor',label:'Needs review',headline:'Significant doshas present',summary:'This pairing has notable astrological challenges. A qualified pandit should review the full charts before proceeding, and remedies should be considered.'};
-}
-
-function doshaClass(v){
-  if(!v||v==='clear') return{cls:'ds-clear',label:'Clear'};
-  if(v==='partial') return{cls:'ds-warn',label:'Partial'};
-  return{cls:'ds-flag',label:'Present'};
-}
-
 // ═══════════════════════════════════════════
 //  PROFILE CACHE (localStorage)
 // ═══════════════════════════════════════════
@@ -702,87 +755,198 @@ async function runMatch(){
 }
 
 // ═══════════════════════════════════════════
+//  KOOT DEFINITIONS
+// ═══════════════════════════════════════════
+const KOOT_DEFS={
+  'Varna':       {max:1,sub:'Spiritual compatibility',
+    good:'Spiritual levels align. Compatible ego levels and values.',
+    bad:'Spiritual mismatch. Ego conflicts may surface over time.'},
+  'Vashya':      {max:2,sub:'Attraction & influence',
+    good:'Strong mutual attraction with balanced power dynamic.',
+    bad:'Power imbalance likely — one partner may feel dominated.'},
+  'Tara':        {max:3,sub:'Birth star compatibility',
+    good:'Auspicious nakshatra distance. Supports health and prosperity.',
+    bad:'Unfavourable star gap. Minor health or financial concerns possible.'},
+  'Yoni':        {max:4,sub:'Physical harmony',
+    good:'Good physical and intimate compatibility. Natural chemistry.',
+    bad:'Physical incompatibility — a persistent source of friction.'},
+  'Graha Maitri':{max:5,sub:'Planetary friendship',
+    good:'Ruling planets are friendly. Easy communication, shared worldview.',
+    bad:'Hostile planet lords. Deep disagreements in thinking are likely.'},
+  'Gana':        {max:6,sub:'Temperament & nature',
+    good:'Same gana — harmonious emotional temperament in daily life.',
+    bad:'Gana mismatch. Different core natures can cause friction.'},
+  'Bhakoot':     {max:7,sub:'Wealth & longevity',
+    good:'Auspicious rashi axis. Positive for wealth and family growth.',
+    bad:'Problematic rashi axis (6–8 or 2–12). Financial and health strain possible.'},
+  'Nadi':        {max:8,sub:'Health & progeny',
+    good:'Full marks. Different nadis — no Nadi dosha. Most critical koot is clear.',
+    bad:'Same nadi = Nadi dosha. Serious concern for progeny and vitality.'},
+};
+
+// ═══════════════════════════════════════════
 //  RENDER RESULTS
 // ═══════════════════════════════════════════
 function renderResults(data,boyName,girlName,boyDob,girlDob,boyCity,girlCity,boyTime24,girlTime24){
   document.getElementById('loading').style.display='none';
 
   const scores = data.scores||{};
-  const total  = data.total||(Object.values(scores).reduce((a,b)=>a+Number(b),0));
-  const v      = verdictInfo(total);
+  const total  = Number(data.total)||(Object.values(scores).reduce((a,b)=>a+Number(b),0));
   const info   = data.info||{};
 
-  document.getElementById('result-title').textContent=boyName+' & '+girlName;
-  document.getElementById('result-date').textContent=new Date().toLocaleDateString('en-IN',{day:'numeric',month:'long',year:'numeric'});
-  document.getElementById('score-display').textContent=total;
-  document.getElementById('verdict-headline').textContent=v.headline;
-  document.getElementById('verdict-summary').textContent=v.summary;
+  // ── Verdict ──────────────────────────────
+  let pillCls,pillTxt,headline,sub,scaleActive;
+  if(total>=28){
+    pillCls='vp-yes';pillTxt='Excellent match';
+    headline='An auspicious union';
+    sub='Score of '+total+'/36 is in the top tier. The stars are strongly aligned across all dimensions.';
+    scaleActive=3;
+  } else if(total>=21){
+    pillCls='vp-yes';pillTxt='Recommended for marriage';
+    headline='A good match — proceed with confidence';
+    sub='Score of '+total+'/36 is well above the 18-point threshold. Key doshas are clear. Consult a pandit before finalising.';
+    scaleActive=2;
+  } else if(total>=18){
+    pillCls='vp-avg';pillTxt='Acceptable match';
+    headline='Proceed with awareness';
+    sub='Score of '+total+'/36 meets the minimum threshold. Some areas need attention — a Jyotishi review is advisable.';
+    scaleActive=1;
+  } else {
+    pillCls='vp-no';pillTxt='Not advised';
+    headline='Significant challenges present';
+    sub='Score of '+total+'/36 falls below the 18-point minimum. A qualified pandit should review the full charts before any decision.';
+    scaleActive=0;
+  }
 
-  const badge=document.getElementById('verdict-badge');
-  badge.textContent=v.label; badge.className='verdict-badge '+v.cls;
+  document.getElementById('v-score').textContent=total;
+  const pill=document.getElementById('v-pill');
+  pill.className='v-pill '+pillCls; pill.textContent=pillTxt;
+  document.getElementById('v-headline').textContent=headline;
+  document.getElementById('v-sub').textContent=sub;
 
-  const arc=document.getElementById('score-arc');
-  const circ=2*Math.PI*60;
+  const arc=document.getElementById('v-arc');
+  const circ=2*Math.PI*40;
   arc.style.strokeDashoffset=circ*(1-total/36);
-  arc.style.stroke=total>=24?'#5fba87':total>=18?'#e8a84a':'#e07060';
+  arc.style.stroke=total>=21?'#5fba87':total>=18?'#e8a84a':'#e07060';
 
-  // Profile cards
-  document.getElementById('profile-cards').innerHTML=`
-    <div class="pmc">
-      <div class="pmc-name">${boyName}</div>
-      <div class="pmc-row">Rashi: <span>${info.boy_rashi||'—'}</span></div>
-      <div class="pmc-row">Nakshatra: <span>${info.boy_nakshatra||'—'}</span></div>
-      <div class="pmc-row">DOB: <span>${boyDob}${boyTime24&&boyTime24!=='00:00'?', '+boyTime24:''}, ${boyCity}</span></div>
-    </div>
-    <div class="pmc">
-      <div class="pmc-name">${girlName}</div>
-      <div class="pmc-row">Rashi: <span>${info.girl_rashi||'—'}</span></div>
-      <div class="pmc-row">Nakshatra: <span>${info.girl_nakshatra||'—'}</span></div>
-      <div class="pmc-row">DOB: <span>${girlDob}${girlTime24&&girlTime24!=='00:00'?', '+girlTime24:''}, ${girlCity}</span></div>
-    </div>`;
-
-  // Koot bars
-  document.getElementById('koot-grid').innerHTML=KOOTS.map(k=>{
-    const sc=Number(scores[k.name]||scores[k.name.toLowerCase().replace(' ','_')]||0);
-    const pct=k.max>0?(sc/k.max*100):0;
-    return`<div class="koot-item">
-      <span class="koot-n">${k.name}</span>
-      <div class="koot-bar-bg"><div class="koot-bar-fill" style="width:${pct}%;background:${barColor(sc,k.max)};"></div></div>
-      <span class="koot-pts">${sc} / ${k.max}</span>
-    </div>`;
-  }).join('');
-
-  // Doshas
-  const doshas=[
-    {name:'Nadi dosha',sub:'Health & progeny',val:data.nadi_dosha},
-    {name:'Bhakoot dosha',sub:'Wealth & longevity',val:data.bhakoot_dosha},
-    {name:'Gana dosha',sub:'Temperament match',val:data.gana_dosha},
-    {name:'Mangal dosha',sub:'Mars placement',val:data.mangal_dosha},
+  const scaleItems=[
+    {t:'0–17 · Avoid',   cls:'vs-r'},{t:'18–20 · Average',cls:'vs-a'},
+    {t:'21–27 · Good',   cls:'vs-g'},{t:'28–36 · Excellent',cls:'vs-g'}
   ];
-  document.getElementById('dosha-grid').innerHTML=doshas.map(d=>{
-    const s=doshaClass(d.val);
-    return`<div class="dosha-card">
-      <div><div class="dosha-name">${d.name}</div><div class="dosha-sub">${d.sub}</div></div>
-      <span class="ds ${s.cls}">${s.label}</span>
-    </div>`;
-  }).join('');
+  document.getElementById('v-scale').innerHTML=scaleItems.map((s,i)=>
+    `<span class="vs ${s.cls}${i===scaleActive?' vs-active':''}">${s.t}${i===scaleActive?' ←':''}</span>`
+  ).join('');
 
-  // AI text
+  // ── Profiles ─────────────────────────────
+  function avColor(idx){return idx===0?'background:#1a2a3a;color:#7eb8d4;':'background:#2a1a20;color:#d4a0b0;';}
+  document.getElementById('profile-cards').innerHTML=[
+    {nm:boyName,  tag:'Boy / Groom',  rashi:info.boy_rashi,  nak:info.boy_nakshatra,  nadi:data.scores?getBkoot('Nadi','boy',data):'—',  gana:getBkoot('Gana','boy',data),  dob:boyDob,  t:boyTime24,  city:boyCity,  av:boyName[0]||'B',  ci:0},
+    {nm:girlName, tag:'Girl / Bride', rashi:info.girl_rashi, nak:info.girl_nakshatra, nadi:data.scores?getBkoot('Nadi','girl',data):'—', gana:getBkoot('Gana','girl',data), dob:girlDob, t:girlTime24, city:girlCity, av:girlName[0]||'G', ci:1}
+  ].map(p=>`
+    <div class="pc">
+      <div class="pc-top">
+        <div class="pc-av" style="${avColor(p.ci)}">${p.av.toUpperCase()}</div>
+        <div><div class="pc-name">${p.nm}</div><div class="pc-tag">${p.tag}</div></div>
+      </div>
+      <div class="pc-row">Rashi <span>${p.rashi||'—'}</span></div>
+      <div class="pc-row">Nakshatra <span>${p.nak||'—'}</span></div>
+      <div class="pc-row">DOB <span>${p.dob}${p.t&&p.t!=='00:00'?', '+p.t:''}</span></div>
+      <div class="pc-row">City <span>${p.city}</span></div>
+    </div>`).join('');
+
+  // ── Koot rows ─────────────────────────────
+  const kootContainer=document.getElementById('koot-rows');
+  kootContainer.innerHTML='';
+  let openDetail=null, openRow=null;
+  Object.entries(KOOT_DEFS).forEach(([name,def])=>{
+    const sc=Number(scores[name]||0);
+    const pct=Math.round(sc/def.max*100);
+    const isGood=sc/def.max>=.4;
+    const tier=sc/def.max>=.75?{b:'bs',l:'Strong',c:'#5fba87'}:sc/def.max>=.4?{b:'ba',l:'Average',c:'#e8a84a'}:{b:'bw',l:'Weak',c:'#e07060'};
+    const boyVal=data.raw_koot?.[name.toLowerCase().replace(' ','_')]?.boy||'—';
+    const girlVal=data.raw_koot?.[name.toLowerCase().replace(' ','_')]?.girl||'—';
+
+    const row=document.createElement('div');
+    row.className='koot-row';
+    row.innerHTML=`
+      <div class="kr-label"><div class="kr-name">${name}</div><div class="kr-sub">${def.sub}</div></div>
+      <div class="kr-bar-wrap"><div class="kr-track"><div class="kr-fill" style="width:${pct}%;background:${tier.c};"></div></div></div>
+      <div class="kr-right"><div class="kr-score">${sc}<span style="font-size:.7em;color:var(--muted);">/${def.max}</span></div><span class="kr-badge ${tier.b}">${tier.l}</span></div>`;
+
+    const detail=document.createElement('div');
+    detail.className='koot-detail';
+    detail.innerHTML=`
+      <div class="kd-text">${isGood?def.good:def.bad}</div>
+      <div class="kd-chips">
+        <div class="kd-chip">Boy: <b>${data.boy_koot?.[name]||boyVal}</b></div>
+        <div class="kd-chip">Girl: <b>${data.girl_koot?.[name]||girlVal}</b></div>
+      </div>`;
+
+    row.addEventListener('click',()=>{
+      if(openDetail&&openDetail!==detail){openDetail.classList.remove('open');openRow.classList.remove('open');}
+      const isNowOpen=detail.classList.toggle('open');
+      row.classList.toggle('open',isNowOpen);
+      openDetail=isNowOpen?detail:null;
+      openRow=isNowOpen?row:null;
+    });
+    kootContainer.appendChild(row);
+    kootContainer.appendChild(detail);
+  });
+
+  const ktVerdict=document.getElementById('kt-verdict');
+  ktVerdict.textContent=total>=28?'Excellent':total>=21?'Good match':total>=18?'Average':'Needs review';
+  ktVerdict.className='kt-verdict '+(total>=21?'bs':total>=18?'ba':'bw');
+  document.getElementById('kt-num').textContent=total;
+
+  // ── Doshas ───────────────────────────────
+  function doshaInfo(v){
+    if(!v||v==='clear') return{cls:'bs',lbl:'Clear'};
+    if(v==='partial')   return{cls:'ba',lbl:'Partial'};
+    return{cls:'bw',lbl:'Present'};
+  }
+  const doshaDescs={
+    nadi:   {name:'Nadi dosha',   clear:'Different nadis — no dosha. Health of children and vitality is well matched.',     present:'Same nadi detected. Nadi dosha present — a serious concern for progeny and long-term health.',     partial:'Partial nadi concern. Worth discussing with a Jyotishi.'},
+    bhakoot:{name:'Bhakoot dosha',clear:'Auspicious rashi axis. No Bhakoot dosha — good for wealth and longevity.',        present:'Problematic rashi axis (6–8 Shadastak or 2–12). Financial and health challenges possible.',      partial:'Partial Bhakoot concern. Rashi axis is not ideal but not the most severe combination.'},
+    gana:   {name:'Gana dosha',   clear:'Same or compatible gana. Harmonious temperament — natural ease in daily life.',   present:'Devata–Rakshasa mismatch. Significant temperament conflict between partners.',                    partial:'Partial gana mismatch. Some temperament differences but manageable.'},
+    mangal: {name:'Mangal dosha', clear:'No Mangal dosha. Mars is not placed in any of the sensitive houses for marriage.', present:'Mangal dosha present in one or both charts. Remedies should be explored before proceeding.',   partial:'Possible Mangal influence. A detailed chart reading is recommended.'},
+  };
+  document.getElementById('dosha-grid').innerHTML=
+    ['nadi','bhakoot','gana','mangal'].map(k=>{
+      const val=data[k+'_dosha'];
+      const di=doshaInfo(val);
+      const dd=doshaDescs[k];
+      const desc=val==='present'?dd.present:val==='partial'?dd.partial:dd.clear;
+      return`<div class="dc">
+        <div class="dc-top"><div class="dc-name">${dd.name}</div><span class="dc-badge ${di.cls}">${di.lbl}</span></div>
+        <div class="dc-desc">${desc}</div>
+      </div>`;
+    }).join('');
+
+  // ── AI text ───────────────────────────────
   const paras=(data.interpretation||'Interpretation unavailable.').split('\n').filter(p=>p.trim());
   document.getElementById('ai-text').innerHTML=paras.map(p=>`<p>${p}</p>`).join('');
 
-  document.getElementById('results').style.display='block';
-
-  // Store context for chatbot
+  // Store for chatbot context
   window._lastReport={boyName,girlName,total,scores,info,doshas:data};
 
+  document.getElementById('results').style.display='block';
   document.getElementById('results').scrollIntoView({behavior:'smooth'});
+}
+
+function getBkoot(kootName,person,data){
+  return data?.['boy_koot']?.[kootName]||data?.['girl_koot']?.[kootName]||'—';
 }
 
 function resetForm(){
   document.getElementById('results').style.display='none';
   document.getElementById('form-section').style.display='block';
   window.scrollTo({top:0,behavior:'smooth'});
+}
+
+function openChatWith(text){
+  if(!chatOpen) toggleChat();
+  document.getElementById('chat-input').value=text;
+  sendChat();
 }
 
 // ═══════════════════════════════════════════

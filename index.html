@@ -281,7 +281,17 @@
   .cta-btn{background:var(--gold);color:#0c0a08;border:none;border-radius:8px;font-family:'DM Sans',sans-serif;font-size:12px;font-weight:500;padding:9px 18px;cursor:pointer;transition:background .2s;white-space:nowrap;align-self:center;}
   .cta-btn:hover{background:var(--gold2);}
 
-  /* footer bits */
+  /* PDF button */
+  .pdf-cta{background:var(--bg2);border:.5px solid var(--gold-border);border-radius:12px;padding:1rem 1.25rem;display:flex;align-items:center;justify-content:space-between;gap:1rem;flex-wrap:wrap;}
+  .pdf-cta-left{display:flex;align-items:center;gap:12px;}
+  .pdf-icon{width:36px;height:36px;border-radius:8px;background:rgba(201,168,76,.1);border:.5px solid var(--gold-border);display:flex;align-items:center;justify-content:center;flex-shrink:0;}
+  .pdf-title{font-size:13px;font-weight:500;color:var(--cream);}
+  .pdf-sub{font-size:11px;color:var(--muted);margin-top:2px;}
+  .btn-pdf{background:var(--gold);color:#0c0a08;border:none;border-radius:8px;font-family:'DM Sans',sans-serif;font-size:13px;font-weight:500;padding:10px 20px;cursor:pointer;transition:background .2s,transform .15s;white-space:nowrap;}
+  .btn-pdf:hover{background:var(--gold2);transform:translateY(-1px);}
+  .btn-pdf:disabled{opacity:.6;cursor:not-allowed;transform:none;}
+
+  /* rp disclaimer */
   .rp-disclaimer{font-size:10px;color:var(--dimmer);line-height:1.6;text-align:center;padding:.75rem .5rem 0;}
   .btn-reset{display:block;margin:.9rem auto 0;width:fit-content;background:transparent;border:.5px solid var(--gold-border);color:var(--gold);border-radius:var(--r);font-family:'DM Sans',sans-serif;font-size:12px;padding:8px 20px;cursor:pointer;transition:border-color .2s,background .2s;}
   .btn-reset:hover{border-color:var(--gold);background:var(--gold-dim);}
@@ -567,6 +577,25 @@
         </div>
       </div>
       <button class="cta-btn" onclick="toggleChat()">Ask now ↗</button>
+    </div>
+
+    <!-- PDF DOWNLOAD -->
+    <div class="sh"><div class="sh-num">6</div><div class="sh-title">Save your report</div><div class="sh-line"></div></div>
+    <div class="pdf-cta">
+      <div class="pdf-cta-left">
+        <div class="pdf-icon">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--gold)" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="12" y1="18" x2="12" y2="12"/><polyline points="9 15 12 18 15 15"/>
+          </svg>
+        </div>
+        <div>
+          <div class="pdf-title">Download full report</div>
+          <div class="pdf-sub">Beautiful 2-page PDF — scores, doshas, interpretation · Free</div>
+        </div>
+      </div>
+      <button class="btn-pdf" id="btn-pdf" onclick="downloadPdf()">
+        ↓ Download PDF
+      </button>
     </div>
 
     <div class="rp-disclaimer">Results are based on Vedic astrology principles and are for informational guidance only. Not a substitute for consultation with a qualified Jyotishi.</div>
@@ -1075,7 +1104,54 @@ function resetForm(){
   window.scrollTo({top:0,behavior:'smooth'});
 }
 
-function openChatWith(text){
+// ═══════════════════════════════════════════
+//  PDF DOWNLOAD (free)
+// ═══════════════════════════════════════════
+async function downloadPdf() {
+  const btn = document.getElementById('btn-pdf');
+  if (!window._lastReport) { alert('Please run a match first.'); return; }
+
+  btn.disabled    = true;
+  btn.textContent = '⏳ Generating…';
+
+  try {
+    const payload = {
+      ...window._lastReport.doshas,
+      boyName:  window._lastReport.boyName,
+      girlName: window._lastReport.girlName,
+      total:    window._lastReport.total,
+      scores:   window._lastReport.scores,
+      info:     window._lastReport.info,
+    };
+
+    const resp = await fetch('/api/generate-pdf', {
+      method:  'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body:    JSON.stringify(payload)
+    });
+
+    if (!resp.ok) throw new Error('Generation failed (HTTP ' + resp.status + ')');
+
+    const blob = await resp.blob();
+    const url  = URL.createObjectURL(blob);
+    const a    = document.createElement('a');
+    a.href     = url;
+    a.download = `kundali-match-${(window._lastReport.boyName||'report').toLowerCase().replace(/\s+/g,'-')}.pdf`;
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    URL.revokeObjectURL(url);
+
+    btn.textContent = '✓ Downloaded!';
+    setTimeout(() => { btn.disabled = false; btn.textContent = '↓ Download PDF'; }, 3000);
+
+  } catch(e) {
+    btn.disabled    = false;
+    btn.textContent = '↓ Download PDF';
+    alert('Could not generate PDF. Please try again.');
+    console.error(e);
+  }
+}
   if(!chatOpen) toggleChat();
   document.getElementById('chat-input').value=text;
   sendChat();

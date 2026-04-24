@@ -256,6 +256,9 @@
   .dc-name{font-size:13px;font-weight:500;color:var(--cream);}
   .dc-badge{font-size:10px;font-weight:500;padding:2px 8px;border-radius:100px;}
   .dc-desc{font-size:11px;color:var(--muted);line-height:1.6;}
+  .dc-chips{display:flex;gap:6px;flex-wrap:wrap;margin-top:7px;}
+  .dc-chip{font-size:10px;background:var(--bg3);border:.5px solid var(--gold-border);padding:2px 9px;border-radius:100px;color:var(--muted);}
+  .dc-chip b{color:var(--cream);font-weight:500;}
 
   /* AI */
   .ai-block{background:var(--bg2);border:.5px solid var(--gold-border);border-radius:12px;padding:1.1rem 1.25rem;}
@@ -992,26 +995,64 @@ function renderResults(data,boyName,girlName,boyDob,girlDob,boyCity,girlCity,boy
     if(v==='partial')   return{cls:'ba',lbl:'Partial'};
     return{cls:'bw',lbl:'Present'};
   }
+
+  // Mangal severity badge — separate from dosha status
+  function mangalSeverityBadge(data){
+    const sev = data.mangal_severity;
+    if(!sev || sev === 'cancelled') return '';
+    const map = { Low:'ba', Medium:'ba', High:'bw' };
+    return `<span class="dc-badge ${map[sev]||'ba'}" style="margin-left:5px;">${sev} severity</span>`;
+  }
+
+  // Build per-person Mangal detail chips
+  function mangalPersonChips(data){
+    const boy  = data.mangal_boy;
+    const girl = data.mangal_girl;
+    if(!boy && !girl) return '';
+    const chips = [];
+    if(boy?.has !== undefined){
+      chips.push(`<span class="dc-chip">${'Boy'}: <b>House ${boy.house||'?'}${boy.sign?' · '+boy.sign:''}</b>${boy.severity?' · '+boy.severity.label:''}</span>`);
+    }
+    if(girl?.has !== undefined){
+      chips.push(`<span class="dc-chip">${'Girl'}: <b>House ${girl.house||'?'}${girl.sign?' · '+girl.sign:''}</b>${girl.severity?' · '+girl.severity.label:''}</span>`);
+    }
+    return chips.length ? `<div class="dc-chips">${chips.join('')}</div>` : '';
+  }
+
   const doshaDescs={
     nadi:   {name:'Nadi dosha',   clear:'Different nadis — no dosha. Health of children and vitality is well matched.',     present:'Same nadi detected. Nadi dosha present — a serious concern for progeny and long-term health.',     partial:'Partial nadi concern. Worth discussing with a Jyotishi.'},
     bhakoot:{name:'Bhakoot dosha',clear:'Auspicious rashi axis. No Bhakoot dosha — good for wealth and longevity.',        present:'Problematic rashi axis (6–8 Shadastak or 2–12). Financial and health challenges possible.',      partial:'Partial Bhakoot concern. Rashi axis is not ideal but not the most severe combination.'},
     gana:   {name:'Gana dosha',   clear:'Same or compatible gana. Harmonious temperament — natural ease in daily life.',   present:'Devata–Rakshasa mismatch. Significant temperament conflict between partners.',                    partial:'Partial gana mismatch. Some temperament differences but manageable.'},
-    mangal: {name:'Mangal dosha',
-      clear:   data.mangal_detail || 'No Mangal dosha. Mars is not placed in any sensitive house in either chart.',
-      present: data.mangal_detail || 'Mangal dosha present. Remedies should be explored before proceeding.',
-      partial: data.mangal_detail || 'Mangal dosha status unclear. A detailed chart reading is recommended.'},
   };
+
   document.getElementById('dosha-grid').innerHTML=
-    ['nadi','bhakoot','gana','mangal'].map(k=>{
-      const val=data[k+'_dosha'];
-      const di=doshaInfo(val);
-      const dd=doshaDescs[k];
-      const desc=val==='present'?dd.present:val==='partial'?dd.partial:dd.clear;
+    ['nadi','bhakoot','gana'].map(k=>{
+      const val = data[k+'_dosha'];
+      const di  = doshaInfo(val);
+      const dd  = doshaDescs[k];
+      const desc= val==='present'?dd.present:val==='partial'?dd.partial:dd.clear;
       return`<div class="dc">
         <div class="dc-top"><div class="dc-name">${dd.name}</div><span class="dc-badge ${di.cls}">${di.lbl}</span></div>
         <div class="dc-desc">${desc}</div>
       </div>`;
-    }).join('');
+    }).join('')
+    // Mangal — rendered separately with severity
+    + (()=>{
+      const val  = data.mangal_dosha;
+      const di   = doshaInfo(val);
+      const desc = data.mangal_detail || (val==='clear'?'No Mangal dosha in either chart.':val==='partial'?'Mangal dosha possible — chart review recommended.':'Mangal dosha present. Remedies should be explored.');
+      return`<div class="dc dc-mangal">
+        <div class="dc-top">
+          <div class="dc-name">Mangal dosha</div>
+          <div style="display:flex;gap:4px;align-items:center;flex-wrap:wrap;">
+            <span class="dc-badge ${di.cls}">${di.lbl}</span>
+            ${mangalSeverityBadge(data)}
+          </div>
+        </div>
+        <div class="dc-desc">${desc}</div>
+        ${mangalPersonChips(data)}
+      </div>`;
+    })();
 
   // ── AI text ───────────────────────────────
   const paras=(data.interpretation||'Interpretation unavailable.').split('\n').filter(p=>p.trim());

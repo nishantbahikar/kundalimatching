@@ -429,16 +429,16 @@
         <div class="field">
           <label>Date of birth</label>
           <div class="field-row3">
-            <input type="text" inputmode="numeric" id="boy-dd" placeholder="DD" data-max="31" data-next="boy-mm" oninput="limitLen(this,2)">
-            <input type="text" inputmode="numeric" id="boy-mm" placeholder="MM" data-max="12" data-next="boy-yyyy" oninput="limitLen(this,2)">
-            <input type="text" inputmode="numeric" id="boy-yyyy" placeholder="YYYY" data-max="2099" data-next="boy-hh" oninput="limitLen(this,4)">
+            <input type="text" inputmode="numeric" id="boy-dd" placeholder="DD" data-min="1" data-max="31" data-next="boy-mm" oninput="limitLen(this,2)">
+            <input type="text" inputmode="numeric" id="boy-mm" placeholder="MM" data-min="1" data-max="12" data-next="boy-yyyy" oninput="limitLen(this,2)">
+            <input type="text" inputmode="numeric" id="boy-yyyy" placeholder="YYYY" data-min="1900" data-max="2099" data-next="boy-hh" oninput="limitLen(this,4)">
           </div>
         </div>
         <div class="field">
           <label>Time of birth</label>
           <div class="field-row3">
-            <input type="text" inputmode="numeric" id="boy-hh" placeholder="HH" data-max="12" data-next="boy-min" oninput="limitLen(this,2)">
-            <input type="text" inputmode="numeric" id="boy-min" placeholder="MM" data-max="59" oninput="limitLen(this,2)">
+            <input type="text" inputmode="numeric" id="boy-hh" placeholder="HH" data-min="1" data-max="12" data-next="boy-min" oninput="limitLen(this,2)">
+            <input type="text" inputmode="numeric" id="boy-min" placeholder="MM" data-min="0" data-max="59" oninput="limitLen(this,2)">
             <select id="boy-ampm"><option value="AM">AM</option><option value="PM" selected>PM</option></select>
           </div>
         </div>
@@ -462,16 +462,16 @@
         <div class="field">
           <label>Date of birth</label>
           <div class="field-row3">
-            <input type="text" inputmode="numeric" id="girl-dd" placeholder="DD" data-max="31" data-next="girl-mm" oninput="limitLen(this,2)">
-            <input type="text" inputmode="numeric" id="girl-mm" placeholder="MM" data-max="12" data-next="girl-yyyy" oninput="limitLen(this,2)">
-            <input type="text" inputmode="numeric" id="girl-yyyy" placeholder="YYYY" data-max="2099" data-next="girl-hh" oninput="limitLen(this,4)">
+            <input type="text" inputmode="numeric" id="girl-dd" placeholder="DD" data-min="1" data-max="31" data-next="girl-mm" oninput="limitLen(this,2)">
+            <input type="text" inputmode="numeric" id="girl-mm" placeholder="MM" data-min="1" data-max="12" data-next="girl-yyyy" oninput="limitLen(this,2)">
+            <input type="text" inputmode="numeric" id="girl-yyyy" placeholder="YYYY" data-min="1900" data-max="2099" data-next="girl-hh" oninput="limitLen(this,4)">
           </div>
         </div>
         <div class="field">
           <label>Time of birth</label>
           <div class="field-row3">
-            <input type="text" inputmode="numeric" id="girl-hh" placeholder="HH" data-max="12" data-next="girl-min" oninput="limitLen(this,2)">
-            <input type="text" inputmode="numeric" id="girl-min" placeholder="MM" data-max="59" oninput="limitLen(this,2)">
+            <input type="text" inputmode="numeric" id="girl-hh" placeholder="HH" data-min="1" data-max="12" data-next="girl-min" oninput="limitLen(this,2)">
+            <input type="text" inputmode="numeric" id="girl-min" placeholder="MM" data-min="0" data-max="59" oninput="limitLen(this,2)">
             <select id="girl-ampm"><option value="AM" selected>AM</option><option value="PM">PM</option></select>
           </div>
         </div>
@@ -750,25 +750,35 @@ function cacheCurrentProfiles(boyName,girlName,boyCity,boyGeoLat,boyGeoLon,girlG
 //  INPUT HELPERS — limit length + auto-advance
 // ═══════════════════════════════════════════
 function limitLen(el, max) {
-  // Strip anything non-numeric
+  // 1. Strip non-digits
   let v = el.value.replace(/\D/g, '');
-  // Cap at max length
+
+  // 2. Cap length
   if (v.length > max) v = v.slice(0, max);
-  // Enforce max value when full
+
+  // 3. When length == max, enforce range
   if (v.length === max) {
     const n    = parseInt(v, 10);
     const maxN = parseInt(el.dataset.max || '9999', 10);
-    const minN = parseInt(el.dataset.min || '1', 10);
+    const minN = parseInt(el.dataset.min || '1',    10);
     if (!isNaN(n)) {
-      if (n > maxN) v = String(maxN);
-      if (max <= 2 && n < minN && v !== '0') v = String(minN).padStart(2, '0');
+      if (n > maxN) { v = String(maxN).padStart(max, '0'); }
+      else if (n < minN && n !== 0) { v = String(minN).padStart(max, '0'); }
     }
   }
+
+  // 4. Write back
   el.value = v;
-  // Auto-advance to next field when full
+
+  // 5. Auto-advance only when VALID and full
   if (v.length === max && el.dataset.next) {
-    const next = document.getElementById(el.dataset.next);
-    if (next) { next.focus(); next.select(); }
+    const n    = parseInt(v, 10);
+    const maxN = parseInt(el.dataset.max || '9999', 10);
+    const minN = parseInt(el.dataset.min || '0',    10);
+    if (n >= minN && n <= maxN) {
+      const next = document.getElementById(el.dataset.next);
+      if (next) { setTimeout(() => { next.focus(); next.select(); }, 0); }
+    }
   }
 }
 
@@ -1154,9 +1164,43 @@ async function downloadPdf() {
     console.error(e);
   }
 }
+
+function openChatWith(text){
   if(!chatOpen) toggleChat();
   document.getElementById('chat-input').value=text;
   sendChat();
+}
+
+function autoResize(el){
+  el.style.height='auto';
+  el.style.height=Math.min(el.scrollHeight,100)+'px';
+}
+
+// ═══════════════════════════════════════════
+//  INPUT HELPERS — limit length + auto-advance
+// ═══════════════════════════════════════════
+function limitLen(el, max) {
+  let v = el.value.replace(/\D/g, '');
+  if (v.length > max) v = v.slice(0, max);
+  if (v.length === max) {
+    const n    = parseInt(v, 10);
+    const maxN = parseInt(el.dataset.max || '9999', 10);
+    const minN = parseInt(el.dataset.min || '1',    10);
+    if (!isNaN(n)) {
+      if (n > maxN) v = String(maxN).padStart(max, '0');
+      else if (n < minN && n !== 0) v = String(minN).padStart(max, '0');
+    }
+  }
+  el.value = v;
+  if (v.length === max && el.dataset.next) {
+    const n    = parseInt(v, 10);
+    const maxN = parseInt(el.dataset.max || '9999', 10);
+    const minN = parseInt(el.dataset.min || '0',    10);
+    if (n >= minN && n <= maxN) {
+      const next = document.getElementById(el.dataset.next);
+      if (next) setTimeout(() => { next.focus(); next.select(); }, 0);
+    }
+  }
 }
 
 // ═══════════════════════════════════════════

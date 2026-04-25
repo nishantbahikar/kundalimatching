@@ -1117,14 +1117,14 @@ function resetForm(){
 }
 
 // ═══════════════════════════════════════════
-//  PDF DOWNLOAD (free)
+//  PDF DOWNLOAD — browser print
 // ═══════════════════════════════════════════
 async function downloadPdf() {
   const btn = document.getElementById('btn-pdf');
   if (!window._lastReport) { alert('Please run a match first.'); return; }
 
   btn.disabled    = true;
-  btn.textContent = '⏳ Generating…';
+  btn.textContent = '⏳ Preparing…';
 
   try {
     const payload = {
@@ -1142,25 +1142,27 @@ async function downloadPdf() {
       body:    JSON.stringify(payload)
     });
 
-    if (!resp.ok) throw new Error('Generation failed (HTTP ' + resp.status + ')');
+    if (!resp.ok) throw new Error('HTTP ' + resp.status);
 
-    const blob = await resp.blob();
+    const html = await resp.text();
+    const blob = new Blob([html], { type: 'text/html' });
     const url  = URL.createObjectURL(blob);
-    const a    = document.createElement('a');
-    a.href     = url;
-    a.download = `kundali-match-${(window._lastReport.boyName||'report').toLowerCase().replace(/\s+/g,'-')}.pdf`;
-    document.body.appendChild(a);
-    a.click();
-    document.body.removeChild(a);
-    URL.revokeObjectURL(url);
 
-    btn.textContent = '✓ Downloaded!';
-    setTimeout(() => { btn.disabled = false; btn.textContent = '↓ Download PDF'; }, 3000);
+    // Open in new tab — print dialog opens automatically
+    const tab = window.open(url, '_blank');
+    if (!tab) {
+      // Fallback if popup blocked
+      const a = document.createElement('a');
+      a.href = url; a.target = '_blank'; a.click();
+    }
+
+    btn.textContent = '✓ Opened — save as PDF';
+    setTimeout(() => { btn.disabled = false; btn.textContent = '↓ Download PDF'; }, 4000);
 
   } catch(e) {
     btn.disabled    = false;
     btn.textContent = '↓ Download PDF';
-    alert('Could not generate PDF. Please try again.');
+    alert('Could not generate report. Please try again.');
     console.error(e);
   }
 }

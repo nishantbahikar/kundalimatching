@@ -1145,15 +1145,15 @@ async function downloadPdf() {
     if (!resp.ok) throw new Error('HTTP ' + resp.status);
 
     const html = await resp.text();
-    const blob = new Blob([html], { type: 'text/html' });
-    const url  = URL.createObjectURL(blob);
 
-    // Open in new tab — print dialog opens automatically
-    const tab = window.open(url, '_blank');
-    if (!tab) {
-      // Fallback if popup blocked
-      const a = document.createElement('a');
-      a.href = url; a.target = '_blank'; a.click();
+    // Open new tab and write HTML directly into it
+    const tab = window.open('', '_blank');
+    if (tab) {
+      tab.document.open();
+      tab.document.write(html);
+      tab.document.close();
+    } else {
+      alert('Please allow popups for this site to open the report, then try again.');
     }
 
     btn.textContent = '✓ Opened — save as PDF';

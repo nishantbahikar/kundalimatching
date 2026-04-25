@@ -134,22 +134,22 @@
       radial-gradient(1.5px 1.5px at 42% 86%,rgba(201,168,76,.3) 0%,transparent 100%);}
 
   /* ── NAV ── */
-  nav{position:relative;z-index:10;display:flex;align-items:center;justify-content:space-between;padding:1.5rem 3rem;border-bottom:.5px solid var(--gold-border);}
-  .logo{font-family:'Cormorant Garamond',serif;font-size:1.4rem;font-weight:400;letter-spacing:.05em;color:var(--gold2);}
+  nav{position:relative;z-index:10;display:flex;align-items:center;justify-content:space-between;padding:1rem 3rem;border-bottom:.5px solid var(--gold-border);}
+  .logo{font-family:'Cormorant Garamond',serif;font-size:1.3rem;font-weight:400;letter-spacing:.05em;color:var(--gold2);}
   .logo span{color:var(--cream);font-style:italic;}
   .nav-tag{font-size:11px;letter-spacing:.15em;text-transform:uppercase;color:var(--muted);}
 
   /* ── HERO ── */
-  .hero{position:relative;z-index:1;text-align:center;padding:2.5rem 2rem 2rem;}
-  .hero-eyebrow{font-size:11px;letter-spacing:.2em;text-transform:uppercase;color:var(--gold);margin-bottom:1rem;display:flex;align-items:center;justify-content:center;gap:12px;}
-  .hero-eyebrow::before,.hero-eyebrow::after{content:'';display:block;width:32px;height:.5px;background:var(--gold);}
-  h1{font-family:'Cormorant Garamond',serif;font-size:clamp(2.2rem,5vw,3.8rem);font-weight:300;line-height:1.1;color:var(--cream);margin-bottom:1rem;}
+  .hero{position:relative;z-index:1;text-align:center;padding:1.25rem 2rem .75rem;}
+  .hero-eyebrow{font-size:10px;letter-spacing:.2em;text-transform:uppercase;color:var(--gold);margin-bottom:.6rem;display:flex;align-items:center;justify-content:center;gap:10px;}
+  .hero-eyebrow::before,.hero-eyebrow::after{content:'';display:block;width:24px;height:.5px;background:var(--gold);}
+  h1{font-family:'Cormorant Garamond',serif;font-size:clamp(1.6rem,4vw,2.6rem);font-weight:300;line-height:1.1;color:var(--cream);margin-bottom:.5rem;}
   h1 em{color:var(--gold2);font-style:italic;}
-  .hero-sub{font-size:.9rem;color:var(--muted);max-width:440px;margin:0 auto 1.5rem;line-height:1.65;}
+  .hero-sub{font-size:.8rem;color:var(--muted);max-width:420px;margin:0 auto .75rem;line-height:1.55;}
 
   /* ── FORM ── */
-  .form-wrap{position:relative;z-index:2;max-width:820px;margin:0 auto;padding:0 1rem 3rem;}
-  .form-card{background:var(--bg2);border:.5px solid var(--gold-border);border-radius:16px;padding:1.75rem;}
+  .form-wrap{position:relative;z-index:2;max-width:820px;margin:0 auto;padding:0 1rem 2rem;}
+  .form-card{background:var(--bg2);border:.5px solid var(--gold-border);border-radius:16px;padding:1.25rem;}
   .form-grid{display:grid;grid-template-columns:1fr 1fr;gap:1.5rem;}
   .person-block{background:var(--bg3);border:.5px solid rgba(201,168,76,.14);border-radius:12px;padding:1.25rem;}
   .person-label{font-family:'Cormorant Garamond',serif;font-size:1.1rem;font-weight:400;color:var(--gold2);margin-bottom:1rem;display:flex;align-items:center;gap:8px;}
@@ -170,11 +170,16 @@
 
   /* ── LOADING ── */
   #loading{display:none;text-align:center;padding:4rem 1rem;position:relative;z-index:2;}
-  .loader-ring{width:48px;height:48px;border-radius:50%;border:1.5px solid var(--gold-border);border-top-color:var(--gold);animation:spin 1s linear infinite;margin:0 auto 1rem;}
-  .loader-text{font-family:'Cormorant Garamond',serif;font-size:1.1rem;font-style:italic;color:var(--muted);}
-  .loader-steps{margin-top:1.5rem;display:flex;flex-direction:column;gap:6px;align-items:center;}
-  .lstep{font-size:12px;color:var(--dimmer);letter-spacing:.08em;transition:color .3s;}
-  .lstep.active{color:var(--gold);}
+  .load-wrap{max-width:380px;margin:0 auto;}
+  .load-mandala{font-size:2rem;color:var(--gold);opacity:.5;margin-bottom:1.25rem;animation:load-spin 3s linear infinite;display:inline-block;}
+  @keyframes load-spin{to{transform:rotate(360deg);}}
+  .load-title{font-family:'Cormorant Garamond',serif;font-size:1.2rem;font-style:italic;color:var(--cream);margin-bottom:1.5rem;opacity:.8;}
+  .load-bar-bg{width:100%;height:4px;background:rgba(201,168,76,.15);border-radius:2px;margin-bottom:.6rem;overflow:hidden;}
+  .load-bar-fill{height:4px;background:linear-gradient(90deg,var(--gold),var(--gold2));border-radius:2px;width:0%;transition:width .4s ease;}
+  .load-pct{font-family:'Cormorant Garamond',serif;font-size:2.2rem;font-weight:300;color:var(--gold2);line-height:1;margin-bottom:.5rem;}
+  .load-step{font-size:12px;color:var(--muted);letter-spacing:.06em;min-height:18px;transition:opacity .3s;}
+
+  @keyframes spin{to{transform:rotate(360deg);}}
   @keyframes pulse{0%,100%{opacity:1;}50%{opacity:.3;}}
 
   /* ── RESULTS ── */
@@ -375,8 +380,8 @@
     .form-grid,.profiles,.dosha-grid{grid-template-columns:1fr;}
     .form-card{padding:1rem;}
     .person-block{padding:1rem;}
-    h1{font-size:2rem;}
-    .hero{padding:1.75rem 1rem 1.5rem;}
+    h1{font-size:1.7rem;}
+    .hero{padding:1rem 1rem .6rem;}
     footer{padding:1rem 1.25rem;}
     #chat-window{bottom:88px;right:12px;width:calc(100vw - 24px);}
     #chat-bubble{bottom:18px;right:14px;width:48px;height:48px;}
@@ -408,8 +413,8 @@
 <!-- HERO -->
 <section class="hero">
   <div class="hero-eyebrow">Ashtakoot Guna Milan</div>
-  <h1>Know if the stars <em>align</em><br>for your union</h1>
-  <p class="hero-sub">Enter both birth details below. We calculate all 8 Koot scores, check key doshas with accurate Vedic calculations, and give you an AI-interpreted reading — in under a minute.</p>
+  <h1>Know if the stars <em>align</em> for your union</h1>
+  <p class="hero-sub">Enter birth details for both. Instant Ashtakoot scores, dosha check &amp; AI reading.</p>
 </section>
 
 <!-- FORM -->
@@ -492,13 +497,12 @@
 
 <!-- LOADING -->
 <div id="loading">
-  <div class="loader-ring"></div>
-  <p class="loader-text">Reading the celestial positions…</p>
-  <div class="loader-steps">
-    <span class="lstep" id="ls1">Finding birth coordinates</span>
-    <span class="lstep" id="ls2">Computing planetary positions</span>
-    <span class="lstep" id="ls3">Calculating Ashtakoot scores</span>
-    <span class="lstep" id="ls4">Writing your interpretation</span>
+  <div class="load-wrap">
+    <div class="load-mandala">✦</div>
+    <div class="load-title">Reading the celestial positions</div>
+    <div class="load-bar-bg"><div class="load-bar-fill" id="load-bar"></div></div>
+    <div class="load-pct" id="load-pct">0%</div>
+    <div class="load-step" id="load-step">Initialising…</div>
   </div>
 </div>
 
@@ -806,10 +810,47 @@ function formatDob(dateStr, time24) {
   return `${dateStr}T${t}:00+05:30`;
 }
 
-function setStep(n){
-  document.querySelectorAll('.lstep').forEach((el,i)=>{
-    el.classList.toggle('active',i<n);
-  });
+// ═══════════════════════════════════════════
+//  PROGRESS BAR
+// ═══════════════════════════════════════════
+const STEPS = [
+  { pct:0,  label:'Initialising…'                  },
+  { pct:15, label:'Finding birth coordinates'       },
+  { pct:35, label:'Computing planetary positions'   },
+  { pct:65, label:'Calculating Ashtakoot scores'    },
+  { pct:85, label:'Writing your interpretation'     },
+  { pct:100,label:'Complete!'                       },
+];
+
+let _progressTimer = null;
+let _currentPct    = 0;
+
+function setProgress(pct, label) {
+  _currentPct = pct;
+  const bar  = document.getElementById('load-bar');
+  const pctEl= document.getElementById('load-pct');
+  const step = document.getElementById('load-step');
+  if (bar)   bar.style.width   = pct + '%';
+  if (pctEl) pctEl.textContent = pct + '%';
+  if (step && label) step.textContent = label;
+}
+
+function setStep(n) {
+  if (_progressTimer) clearInterval(_progressTimer);
+  const target = STEPS[n] || STEPS[0];
+  setProgress(target.pct, target.label);
+
+  // Smoothly tick up to next step target while waiting
+  if (n < STEPS.length - 1) {
+    const nextPct = STEPS[n + 1]?.pct || target.pct;
+    const gap = nextPct - target.pct;
+    let ticked = target.pct;
+    _progressTimer = setInterval(() => {
+      ticked += 0.5;
+      if (ticked >= nextPct - 2) { clearInterval(_progressTimer); return; }
+      setProgress(Math.round(ticked), target.label);
+    }, 80);
+  }
 }
 
 async function geocode(city){
@@ -837,6 +878,7 @@ async function runMatch(){
   document.getElementById('form-section').style.display='none';
   document.getElementById('loading').style.display='block';
   document.getElementById('results').style.display='none';
+  setProgress(0, 'Initialising…');
   setStep(0);
 
   try{
@@ -1051,11 +1093,12 @@ function renderResults(data,boyName,girlName,boyDob,girlDob,boyCity,girlCity,boy
     const girl = data.mangal_girl;
     if(!boy && !girl) return '';
     const chips = [];
-    if(boy?.has !== undefined){
-      chips.push(`<span class="dc-chip">${'Boy'}: <b>House ${boy.house||'?'}${boy.sign?' · '+boy.sign:''}</b>${boy.severity?' · '+boy.severity.label:''}</span>`);
+    // Only show chip if we have real house data (not when skipped via message)
+    if(boy?.has && boy?.house){
+      chips.push(`<span class="dc-chip">Boy: <b>House ${boy.house}${boy.sign?' · '+boy.sign:''}</b>${boy.severity?' · '+boy.severity.label:''}</span>`);
     }
-    if(girl?.has !== undefined){
-      chips.push(`<span class="dc-chip">${'Girl'}: <b>House ${girl.house||'?'}${girl.sign?' · '+girl.sign:''}</b>${girl.severity?' · '+girl.severity.label:''}</span>`);
+    if(girl?.has && girl?.house){
+      chips.push(`<span class="dc-chip">Girl: <b>House ${girl.house}${girl.sign?' · '+girl.sign:''}</b>${girl.severity?' · '+girl.severity.label:''}</span>`);
     }
     return chips.length ? `<div class="dc-chips">${chips.join('')}</div>` : '';
   }
@@ -1366,21 +1409,21 @@ function hideDrop(dropId){
 }
 </script>
 <!-- SEO content — visible to search engines, contextually useful -->
-<section style="max-width:760px;margin:0 auto;padding:2rem 1.25rem 3rem;position:relative;z-index:2;" aria-label="About kundali matching">
-  <div style="border-top:.5px solid rgba(201,168,76,.15);padding-top:2rem;">
-    <h2 style="font-family:'Cormorant Garamond',serif;font-size:1.3rem;font-weight:400;color:rgba(245,239,230,.5);margin-bottom:1rem;">About kundali matching</h2>
-    <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:1.5rem;">
+<section style="width:100%;padding:2rem 3rem 3rem;position:relative;z-index:2;" aria-label="About kundali matching">
+  <div style="border-top:.5px solid rgba(201,168,76,.15);padding-top:2rem;max-width:1100px;margin:0 auto;">
+    <h2 style="font-family:'Cormorant Garamond',serif;font-size:1.1rem;font-weight:400;color:rgba(245,239,230,.4);margin-bottom:1.5rem;letter-spacing:.05em;">About kundali matching</h2>
+    <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:3rem;">
       <div>
-        <h3 style="font-size:12px;font-weight:500;letter-spacing:.08em;text-transform:uppercase;color:rgba(201,168,76,.5);margin-bottom:.5rem;">What is Guna Milan?</h3>
-        <p style="font-size:12px;color:rgba(245,239,230,.3);line-height:1.7;">Ashtakoot Guna Milan is the Vedic astrology method of kundali matching that evaluates 8 compatibility factors (koots) and assigns a score out of 36. A score of 18+ is considered acceptable for marriage.</p>
+        <h3 style="font-size:11px;font-weight:500;letter-spacing:.1em;text-transform:uppercase;color:rgba(201,168,76,.5);margin-bottom:.6rem;">What is Guna Milan?</h3>
+        <p style="font-size:12px;color:rgba(245,239,230,.28);line-height:1.75;">Ashtakoot Guna Milan is the Vedic astrology method of kundali matching that evaluates 8 compatibility factors (koots) and assigns a score out of 36. A score of 18 or above is considered acceptable for marriage.</p>
       </div>
       <div>
-        <h3 style="font-size:12px;font-weight:500;letter-spacing:.08em;text-transform:uppercase;color:rgba(201,168,76,.5);margin-bottom:.5rem;">The 8 Ashtakoots</h3>
-        <p style="font-size:12px;color:rgba(245,239,230,.3);line-height:1.7;">Varna (1), Vashya (2), Tara (3), Yoni (4), Graha Maitri (5), Gana (6), Bhakoot (7), Nadi (8). Nadi has the highest weight and is the most critical compatibility factor.</p>
+        <h3 style="font-size:11px;font-weight:500;letter-spacing:.1em;text-transform:uppercase;color:rgba(201,168,76,.5);margin-bottom:.6rem;">The 8 Ashtakoots</h3>
+        <p style="font-size:12px;color:rgba(245,239,230,.28);line-height:1.75;">Varna (1), Vashya (2), Tara (3), Yoni (4), Graha Maitri (5), Gana (6), Bhakoot (7), Nadi (8). Nadi carries the highest weight at 8 points and is the most critical compatibility factor in any match.</p>
       </div>
       <div>
-        <h3 style="font-size:12px;font-weight:500;letter-spacing:.08em;text-transform:uppercase;color:rgba(201,168,76,.5);margin-bottom:.5rem;">Mangal &amp; Nadi dosha</h3>
-        <p style="font-size:12px;color:rgba(245,239,230,.3);line-height:1.7;">Mangal dosha is checked separately from Guna Milan. Nadi dosha (same nadi for both) scores 0/8 and is considered serious. Both doshas have traditional cancellation rules.</p>
+        <h3 style="font-size:11px;font-weight:500;letter-spacing:.1em;text-transform:uppercase;color:rgba(201,168,76,.5);margin-bottom:.6rem;">Mangal &amp; Nadi dosha</h3>
+        <p style="font-size:12px;color:rgba(245,239,230,.28);line-height:1.75;">Mangal dosha is checked separately from Guna Milan via Mars house placement. Nadi dosha (same nadi for both) scores 0/8 and is considered the most serious. Both have traditional cancellation rules.</p>
       </div>
     </div>
   </div>

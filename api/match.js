@@ -144,13 +144,13 @@ export default async function handler(req, res) {
           model: 'claude-haiku-4-5-20251001', // Haiku — same quality for this task, ~20x cheaper
           max_tokens: 600,
           messages: [{ role: 'user', content:
-`Vedic astrology expert. Write a 2-paragraph kundali match interpretation for ${boyName||'the boy'} and ${girlName||'the girl'}.
+`Vedic astrology expert. Write a kundali match interpretation for ${boyName||'the boy'} and ${girlName||'the girl'} as 4-5 short bullet points.
 
 Scores: ${Object.entries(scores).map(([k,v])=>`${k}=${v}`).join(', ')} | Total: ${total}/36
 ${info.boy_rashi} (boy) · ${info.girl_rashi} (girl) | Nadi:${nadi_dosha} Bhakoot:${bhakoot_dosha} Gana:${gana_dosha} Mangal:${mangal_dosha}${mangal_severity?' ('+mangal_severity+')':''}
 
-Para 1: Overall score and key strengths. Para 2: Honest concerns and practical advice.
-Warm, plain language. No bullets or headers.` }]
+Each bullet: one clear insight. Cover overall score, key strengths, key concerns, dosha status, practical advice.
+Return ONLY the bullet points, one per line, each starting with •. No headers, no paragraphs.` }]
         })
       });
       const cd = await claudeRes.json();

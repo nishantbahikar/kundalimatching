@@ -392,6 +392,8 @@
   }
 
   /* city autocomplete */
+  .seo-grid{display:grid;grid-template-columns:1fr 1fr 1fr;gap:3rem;}
+  @media(max-width:640px){.seo-grid{grid-template-columns:1fr;gap:1.5rem;}}
   .city-wrap{position:relative;}
   .city-dropdown{position:absolute;top:100%;left:0;right:0;background:var(--bg3);border:.5px solid var(--gold-border);border-top:none;border-radius:0 0 var(--r) var(--r);z-index:100;max-height:160px;overflow-y:auto;display:none;}
   .city-dropdown.open{display:block;}
@@ -540,15 +542,30 @@
     <!-- 3. ASHTAKOOT -->
     <div class="sh"><div class="sh-num">3</div><div class="sh-title">Ashtakoot scores</div><div class="sh-line"></div></div>
     <div class="koot-wrap">
-      <div id="koot-rows"></div>
-      <div class="koot-total">
-        <div class="kt-left">Total score</div>
-        <div class="kt-right">
-          <span class="kt-verdict bs" id="kt-verdict">—</span>
-          <span class="kt-num" id="kt-num">—</span>
-          <span class="kt-den">/ 36</span>
-        </div>
-      </div>
+      <table style="width:100%;border-collapse:collapse;" id="koot-table">
+        <thead>
+          <tr style="background:var(--bg3);">
+            <th style="padding:.5rem .75rem;font-size:10px;font-weight:500;color:var(--muted);text-align:left;letter-spacing:.06em;text-transform:uppercase;width:28px;">#</th>
+            <th style="padding:.5rem .75rem;font-size:10px;font-weight:500;color:var(--muted);text-align:left;letter-spacing:.06em;text-transform:uppercase;">Koot</th>
+            <th style="padding:.5rem .75rem;font-size:10px;font-weight:500;color:var(--muted);text-align:left;letter-spacing:.06em;text-transform:uppercase;display:none;" class="koot-col-values">Boy · Girl</th>
+            <th style="padding:.5rem .75rem;font-size:10px;font-weight:500;color:var(--muted);text-align:center;letter-spacing:.06em;text-transform:uppercase;width:90px;">Score</th>
+            <th style="padding:.5rem .75rem;font-size:10px;font-weight:500;color:var(--muted);text-align:right;letter-spacing:.06em;text-transform:uppercase;width:70px;">Rating</th>
+          </tr>
+        </thead>
+        <tbody id="koot-rows"></tbody>
+        <tfoot>
+          <tr style="background:var(--bg3);border-top:.5px solid var(--gold-border);">
+            <td colspan="2" style="padding:.65rem .75rem;font-size:11px;font-weight:500;color:var(--muted);text-transform:uppercase;letter-spacing:.08em;">Total score</td>
+            <td style="padding:.65rem .75rem;text-align:center;">
+              <span class="kt-verdict bs" id="kt-verdict">—</span>
+            </td>
+            <td style="padding:.65rem .75rem;text-align:right;">
+              <span class="kt-num" id="kt-num" style="font-family:'Cormorant Garamond',serif;font-size:1.6rem;font-weight:300;color:var(--cream);line-height:1;">—</span>
+              <span class="kt-den" style="font-size:11px;color:var(--muted);"> / 36</span>
+            </td>
+          </tr>
+        </tfoot>
+      </table>
     </div>
 
     <!-- 4. DOSHAS -->
@@ -572,8 +589,8 @@
           </svg>
         </div>
         <div>
-          <div class="pdf-title">Download full report</div>
-          <div class="pdf-sub">PDF Report — scores, doshas &amp; interpretation · Free</div>
+          <div class="pdf-title">Download full detailed report</div>
+          <div class="pdf-sub">PDF Report — in-depth analysis, scores, doshas &amp; interpretation · Free</div>
         </div>
       </div>
       <button class="btn-pdf" id="btn-pdf" onclick="downloadPdf()">↓ Download PDF</button>
@@ -1027,36 +1044,34 @@ function renderResults(data,boyName,girlName,boyDob,girlDob,boyCity,girlCity,boy
       <div class="pc-row">City <span>${p.city}</span></div>
     </div>`).join('');
 
-  // ── Koot rows ─────────────────────────────
+  // ── Koot table ────────────────────────────
   const kootContainer=document.getElementById('koot-rows');
   kootContainer.innerHTML='';
-  let openDetail=null, openRow=null;
-  Object.entries(KOOT_DEFS).forEach(([name,def])=>{
+  Object.entries(KOOT_DEFS).forEach(([name,def],idx)=>{
     const sc=Number(scores[name]||0);
     const pct=Math.round(sc/def.max*100);
     const isGood=sc/def.max>=.4;
     const tier=sc/def.max>=.75?{b:'bs',l:'Strong',c:'#5fba87'}:sc/def.max>=.4?{b:'ba',l:'Average',c:'#e8a84a'}:{b:'bw',l:'Weak',c:'#e07060'};
-    const boyVal=data.raw_koot?.[name.toLowerCase().replace(' ','_')]?.boy||'—';
-    const girlVal=data.raw_koot?.[name.toLowerCase().replace(' ','_')]?.girl||'—';
-
-    const row=document.createElement('div');
-    row.className='koot-row';
-    row.innerHTML=`
-      <div class="kr-label"><div class="kr-name">${name}</div><div class="kr-sub">${def.sub}</div></div>
-      <div class="kr-bar-wrap"><div class="kr-track"><div class="kr-fill" style="width:${pct}%;background:${tier.c};"></div></div></div>
-      <div class="kr-right"><div class="kr-score">${sc}<span style="font-size:.7em;color:var(--muted);">/${def.max}</span></div><span class="kr-badge ${tier.b}">${tier.l}</span></div>`;
-
-    const detail=document.createElement('div');
-    detail.className='koot-detail';
-    detail.innerHTML=`
-      <div class="kd-text">${isGood?def.good:def.bad}</div>
-      <div class="kd-chips">
-        <div class="kd-chip">Boy: <b>${data.boy_koot?.[name]||boyVal}</b></div>
-        <div class="kd-chip">Girl: <b>${data.girl_koot?.[name]||girlVal}</b></div>
-      </div>`;
-
-    kootContainer.appendChild(row);
-    kootContainer.appendChild(detail);
+    const boyVal=data.boy_koot?.[name]||'—';
+    const girlVal=data.girl_koot?.[name]||'—';
+    const tr=document.createElement('tr');
+    tr.style.borderBottom='.5px solid rgba(201,168,76,.07)';
+    tr.innerHTML=`
+      <td style="padding:.55rem .75rem;font-size:11px;color:var(--muted);text-align:left;">${idx+1}</td>
+      <td style="padding:.55rem .75rem;">
+        <div style="font-size:12px;font-weight:500;color:var(--cream);">${name}</div>
+        <div style="font-size:10px;color:var(--muted);margin-top:1px;">${def.sub}</div>
+        <div style="font-size:10px;color:var(--dimmer);margin-top:2px;">${isGood?def.good:def.bad}</div>
+      </td>
+      <td style="padding:.55rem .75rem;font-size:10px;color:var(--muted);display:none;" class="koot-col-values">${boyVal} · ${girlVal}</td>
+      <td style="padding:.55rem .75rem;text-align:center;">
+        <div style="display:flex;align-items:center;gap:6px;">
+          <div style="flex:1;height:3px;background:rgba(255,255,255,.08);border-radius:2px;"><div style="width:${pct}%;height:3px;background:${tier.c};border-radius:2px;"></div></div>
+          <span style="font-family:'Cormorant Garamond',serif;font-size:1rem;color:var(--cream);min-width:28px;text-align:right;">${sc}<span style="font-size:.7em;color:var(--muted);">/${def.max}</span></span>
+        </div>
+      </td>
+      <td style="padding:.55rem .75rem;text-align:right;"><span class="kr-badge ${tier.b}">${tier.l}</span></td>`;
+    kootContainer.appendChild(tr);
   });
 
   const ktVerdict=document.getElementById('kt-verdict');
@@ -1096,45 +1111,48 @@ function renderResults(data,boyName,girlName,boyDob,girlDob,boyCity,girlCity,boy
   }
 
   const doshaDescs={
-    nadi:   {name:'Nadi dosha',   clear:'Different nadis — no dosha. Health of children and vitality is well matched.',     present:'Same nadi detected. Nadi dosha present — a serious concern for progeny and long-term health.',     partial:'Partial nadi concern. Worth discussing with a Jyotishi.'},
-    bhakoot:{name:'Bhakoot dosha',clear:'Auspicious rashi axis. No Bhakoot dosha — good for wealth and longevity.',        present:'Problematic rashi axis (6–8 Shadastak or 2–12). Financial and health challenges possible.',      partial:'Partial Bhakoot concern. Rashi axis is not ideal but not the most severe combination.'},
-    gana:   {name:'Gana dosha',   clear:'Same or compatible gana. Harmonious temperament — natural ease in daily life.',   present:'Devata–Rakshasa mismatch. Significant temperament conflict between partners.',                    partial:'Partial gana mismatch. Some temperament differences but manageable.'},
+    mangal: {name:'Mangal dosha',   clear:'',present:'',partial:''},
+    nadi:   {name:'Nadi dosha',     clear:'Different nadis — no dosha. Health of children and vitality is well matched.',     present:'Same nadi detected. Nadi dosha present — serious concern for progeny and long-term health.',     partial:'Partial nadi concern. Worth discussing with a Jyotishi.'},
+    bhakoot:{name:'Bhakoot dosha',  clear:'Auspicious rashi axis. No Bhakoot dosha — good for wealth and longevity.',        present:'Shadastak (6–8) or 2–12 rashi axis detected. Financial and health challenges possible.',          partial:'Partial Bhakoot concern — rashi axis not ideal but not the most severe combination.'},
+    gana:   {name:'Gana dosha',     clear:'Same or compatible gana. Harmonious temperament — natural ease in daily life.',   present:'Devata–Rakshasa mismatch. Significant temperament conflict between partners.',                    partial:'Partial gana mismatch. Some temperament differences but manageable.'},
   };
 
   document.getElementById('dosha-grid').innerHTML=
-    ['nadi','bhakoot','gana'].map(k=>{
+    ['mangal','nadi','bhakoot','gana'].map(k=>{
       const val = data[k+'_dosha'];
       const di  = doshaInfo(val);
+      if(k==='mangal'){
+        const desc = data.mangal_detail || (val==='clear'?'No Mangal dosha in either chart.':val==='partial'?'Mangal dosha possible — chart review recommended.':'Mangal dosha present. Remedies should be explored.');
+        return`<div class="dc dc-mangal">
+          <div class="dc-top">
+            <div class="dc-name">Mangal dosha</div>
+            <div style="display:flex;gap:4px;align-items:center;flex-wrap:wrap;">
+              <span class="dc-badge ${di.cls}">${di.lbl}</span>
+              ${mangalSeverityBadge(data)}
+            </div>
+          </div>
+          <div class="dc-desc">${desc}</div>
+          ${mangalPersonChips(data)}
+        </div>`;
+      }
       const dd  = doshaDescs[k];
       const desc= val==='present'?dd.present:val==='partial'?dd.partial:dd.clear;
       return`<div class="dc">
         <div class="dc-top"><div class="dc-name">${dd.name}</div><span class="dc-badge ${di.cls}">${di.lbl}</span></div>
         <div class="dc-desc">${desc}</div>
       </div>`;
-    }).join('')
-    // Mangal — rendered separately with severity
-    + (()=>{
-      const val  = data.mangal_dosha;
-      const di   = doshaInfo(val);
-      const desc = data.mangal_detail || (val==='clear'?'No Mangal dosha in either chart.':val==='partial'?'Mangal dosha possible — chart review recommended.':'Mangal dosha present. Remedies should be explored.');
-      return`<div class="dc dc-mangal">
-        <div class="dc-top">
-          <div class="dc-name">Mangal dosha</div>
-          <div style="display:flex;gap:4px;align-items:center;flex-wrap:wrap;">
-            <span class="dc-badge ${di.cls}">${di.lbl}</span>
-            ${mangalSeverityBadge(data)}
-          </div>
-        </div>
-        <div class="dc-desc">${desc}</div>
-        ${mangalPersonChips(data)}
-      </div>`;
-    })();
+    }).join('');
 
   // ── AI text — pointwise ──────────────────
-  const paras=(data.interpretation||'Interpretation unavailable.').split('\n').filter(p=>p.trim());
-  document.getElementById('ai-text').innerHTML=`<ul style="padding-left:1.1rem;display:flex;flex-direction:column;gap:.5rem;">`+
-    paras.map(p=>`<li style="font-size:13px;line-height:1.75;color:rgba(245,239,230,.78);">${p}</li>`).join('')+
-  `</ul>`;
+  const rawInterp = data.interpretation || 'Interpretation unavailable.';
+  // Strip leading bullet characters AI might add, then re-render as clean list
+  const points = rawInterp.split('\n')
+    .map(p => p.replace(/^[\u2022\-\*•]\s*/,'').trim())
+    .filter(p => p.length > 0);
+  document.getElementById('ai-text').innerHTML =
+    `<ul style="padding-left:1.1rem;display:flex;flex-direction:column;gap:.5rem;">` +
+    points.map(p=>`<li style="font-size:13px;line-height:1.75;color:rgba(245,239,230,.78);">${p}</li>`).join('') +
+    `</ul>`;
 
   // Store for chatbot context
   window._lastReport={boyName,girlName,total,scores,info,doshas:data};
@@ -1406,7 +1424,7 @@ function hideDrop(dropId){
 <section style="width:100%;padding:2rem 3rem 3rem;position:relative;z-index:2;" aria-label="About kundali matching">
   <div style="border-top:.5px solid rgba(201,168,76,.15);padding-top:2rem;max-width:1100px;margin:0 auto;">
     <h2 style="font-family:'Cormorant Garamond',serif;font-size:1.1rem;font-weight:400;color:rgba(245,239,230,.4);margin-bottom:1.5rem;letter-spacing:.05em;">About kundali matching</h2>
-    <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:3rem;">
+    <div class="seo-grid">
       <div>
         <h3 style="font-size:11px;font-weight:500;letter-spacing:.1em;text-transform:uppercase;color:rgba(201,168,76,.5);margin-bottom:.6rem;">What is Guna Milan?</h3>
         <p style="font-size:12px;color:rgba(245,239,230,.28);line-height:1.75;">Ashtakoot Guna Milan is the Vedic astrology method of kundali matching that evaluates 8 compatibility factors (koots) and assigns a score out of 36. A score of 18 or above is considered acceptable for marriage.</p>

@@ -144,13 +144,29 @@ export default async function handler(req, res) {
           model: 'claude-haiku-4-5-20251001', // Haiku — same quality for this task, ~20x cheaper
           max_tokens: 600,
           messages: [{ role: 'user', content:
-`Vedic astrology expert. Write a kundali match interpretation for ${boyName||'the boy'} and ${girlName||'the girl'} as 4-5 short bullet points.
+`Vedic astrology expert. Write a detailed kundali match interpretation for ${boyName||'the boy'} and ${girlName||'the girl'} in two clear sections.
 
 Scores: ${Object.entries(scores).map(([k,v])=>`${k}=${v}`).join(', ')} | Total: ${total}/36
 ${info.boy_rashi} (boy) · ${info.girl_rashi} (girl) | Nadi:${nadi_dosha} Bhakoot:${bhakoot_dosha} Gana:${gana_dosha} Mangal:${mangal_dosha}${mangal_severity?' ('+mangal_severity+')':''}
 
-Each bullet: one clear insight. Cover overall score, key strengths, key concerns, dosha status, practical advice.
-Return ONLY the bullet points, one per line, each starting with •. No headers, no paragraphs.` }]
+SECTION 1 - "Core Compatibility" (4-5 bullets):
+Cover: overall score verdict, Nadi result, Bhakoot/rashi axis, Gana temperament, physical/emotional harmony. Be specific about what each score means for this couple.
+
+SECTION 2 - "Additional Insights" (3-4 bullets):
+Cover: Mangal dosha findings, planetary friendship (Graha Maitri), practical advice, remedies if needed, whether to see a pandit.
+
+Format exactly like this — return the two section headers as plain text followed by bullet lines:
+Core Compatibility
+• bullet one
+• bullet two
+...
+
+Additional Insights
+• bullet one
+• bullet two
+...
+
+No other formatting. Warm, honest, plain language.` }]
         })
       });
       const cd = await claudeRes.json();

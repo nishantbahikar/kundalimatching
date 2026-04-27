@@ -545,23 +545,22 @@
       <table style="width:100%;border-collapse:collapse;" id="koot-table">
         <thead>
           <tr style="background:var(--bg3);">
-            <th style="padding:.5rem .75rem;font-size:10px;font-weight:500;color:var(--muted);text-align:left;letter-spacing:.06em;text-transform:uppercase;width:28px;">#</th>
-            <th style="padding:.5rem .75rem;font-size:10px;font-weight:500;color:var(--muted);text-align:left;letter-spacing:.06em;text-transform:uppercase;">Koot</th>
-            <th style="padding:.5rem .75rem;font-size:10px;font-weight:500;color:var(--muted);text-align:left;letter-spacing:.06em;text-transform:uppercase;display:none;" class="koot-col-values">Boy · Girl</th>
-            <th style="padding:.5rem .75rem;font-size:10px;font-weight:500;color:var(--muted);text-align:center;letter-spacing:.06em;text-transform:uppercase;width:90px;">Score</th>
-            <th style="padding:.5rem .75rem;font-size:10px;font-weight:500;color:var(--muted);text-align:right;letter-spacing:.06em;text-transform:uppercase;width:70px;">Rating</th>
+            <th style="padding:.5rem .6rem .5rem .75rem;font-size:9px;font-weight:500;color:var(--muted);text-align:left;letter-spacing:.08em;text-transform:uppercase;width:22px;">#</th>
+            <th style="padding:.5rem .5rem;font-size:9px;font-weight:500;color:var(--muted);text-align:left;letter-spacing:.08em;text-transform:uppercase;width:38%;">Koot &amp; description</th>
+            <th style="padding:.5rem .5rem;font-size:9px;font-weight:500;color:var(--muted);text-align:left;letter-spacing:.08em;text-transform:uppercase;width:28%;">Boy · Girl values</th>
+            <th style="padding:.5rem .5rem;font-size:9px;font-weight:500;color:var(--muted);text-align:left;letter-spacing:.08em;text-transform:uppercase;width:28%;">Score &amp; rating</th>
           </tr>
         </thead>
         <tbody id="koot-rows"></tbody>
         <tfoot>
           <tr style="background:var(--bg3);border-top:.5px solid var(--gold-border);">
-            <td colspan="2" style="padding:.65rem .75rem;font-size:11px;font-weight:500;color:var(--muted);text-transform:uppercase;letter-spacing:.08em;">Total score</td>
-            <td style="padding:.65rem .75rem;text-align:center;">
-              <span class="kt-verdict bs" id="kt-verdict">—</span>
-            </td>
-            <td style="padding:.65rem .75rem;text-align:right;">
-              <span class="kt-num" id="kt-num" style="font-family:'Cormorant Garamond',serif;font-size:1.6rem;font-weight:300;color:var(--cream);line-height:1;">—</span>
-              <span class="kt-den" style="font-size:11px;color:var(--muted);"> / 36</span>
+            <td colspan="3" style="padding:.65rem .75rem;font-size:11px;font-weight:500;color:var(--muted);text-transform:uppercase;letter-spacing:.08em;">Total score</td>
+            <td style="padding:.65rem .75rem;">
+              <div style="display:flex;align-items:center;justify-content:flex-start;gap:8px;">
+                <span class="kt-verdict bs" id="kt-verdict">—</span>
+                <span style="font-family:'Cormorant Garamond',serif;font-size:1.8rem;font-weight:300;color:var(--cream);line-height:1;" id="kt-num">—</span>
+                <span style="font-size:11px;color:var(--muted);">/ 36</span>
+              </div>
             </td>
           </tr>
         </tfoot>
@@ -1055,22 +1054,31 @@ function renderResults(data,boyName,girlName,boyDob,girlDob,boyCity,girlCity,boy
     const boyVal=data.boy_koot?.[name]||'—';
     const girlVal=data.girl_koot?.[name]||'—';
     const tr=document.createElement('tr');
-    tr.style.borderBottom='.5px solid rgba(201,168,76,.07)';
+    tr.style.borderBottom='.5px solid rgba(201,168,76,.08)';
     tr.innerHTML=`
-      <td style="padding:.55rem .75rem;font-size:11px;color:var(--muted);text-align:left;">${idx+1}</td>
-      <td style="padding:.55rem .75rem;">
-        <div style="font-size:12px;font-weight:500;color:var(--cream);">${name}</div>
-        <div style="font-size:10px;color:var(--muted);margin-top:1px;">${def.sub}</div>
-        <div style="font-size:10px;color:var(--dimmer);margin-top:2px;">${isGood?def.good:def.bad}</div>
+      <td style="padding:.6rem .6rem .6rem .75rem;font-size:11px;color:var(--muted);text-align:left;width:22px;vertical-align:top;padding-top:.85rem;">${idx+1}</td>
+      <td style="padding:.6rem .5rem;vertical-align:top;width:38%;">
+        <div style="font-size:12px;font-weight:500;color:var(--cream);line-height:1.2;">${name}</div>
+        <div style="font-size:10px;color:var(--gold);opacity:.7;margin-top:2px;letter-spacing:.02em;">${def.sub}</div>
+        <div style="font-size:10px;color:var(--muted);margin-top:3px;line-height:1.4;">${isGood?def.good:def.bad}</div>
       </td>
-      <td style="padding:.55rem .75rem;font-size:10px;color:var(--muted);display:none;" class="koot-col-values">${boyVal} · ${girlVal}</td>
-      <td style="padding:.55rem .75rem;text-align:center;">
-        <div style="display:flex;align-items:center;gap:6px;">
-          <div style="flex:1;height:3px;background:rgba(255,255,255,.08);border-radius:2px;"><div style="width:${pct}%;height:3px;background:${tier.c};border-radius:2px;"></div></div>
-          <span style="font-family:'Cormorant Garamond',serif;font-size:1rem;color:var(--cream);min-width:28px;text-align:right;">${sc}<span style="font-size:.7em;color:var(--muted);">/${def.max}</span></span>
+      <td style="padding:.6rem .5rem;vertical-align:middle;width:28%;">
+        <div style="font-size:9px;color:var(--muted);letter-spacing:.08em;text-transform:uppercase;margin-bottom:5px;">Boy · Girl</div>
+        <div style="display:flex;align-items:center;gap:5px;">
+          <span style="font-size:11px;color:var(--cream);background:rgba(126,184,212,.1);border:.5px solid rgba(126,184,212,.2);padding:2px 8px;border-radius:100px;white-space:nowrap;">${boyVal}</span>
+          <span style="color:var(--muted);font-size:10px;">·</span>
+          <span style="font-size:11px;color:var(--cream);background:rgba(212,160,176,.1);border:.5px solid rgba(212,160,176,.2);padding:2px 8px;border-radius:100px;white-space:nowrap;">${girlVal}</span>
         </div>
       </td>
-      <td style="padding:.55rem .75rem;text-align:right;"><span class="kr-badge ${tier.b}">${tier.l}</span></td>`;
+      <td style="padding:.6rem .5rem;vertical-align:middle;width:28%;">
+        <div style="display:flex;align-items:center;gap:8px;margin-bottom:5px;">
+          <div style="flex:1;height:6px;background:rgba(255,255,255,.08);border-radius:3px;overflow:hidden;">
+            <div style="width:${pct}%;height:6px;background:${tier.c};border-radius:3px;"></div>
+          </div>
+          <span style="font-family:'Cormorant Garamond',serif;font-size:1.15rem;color:var(--cream);line-height:1;min-width:32px;text-align:right;">${sc}<span style="font-size:.65em;color:var(--muted);">/${def.max}</span></span>
+        </div>
+        <span class="kr-badge ${tier.b}" style="font-size:9px;">${tier.l}</span>
+      </td>`;
     kootContainer.appendChild(tr);
   });
 
